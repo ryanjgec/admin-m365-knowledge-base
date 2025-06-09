@@ -1,14 +1,19 @@
 
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CategoryManager from '@/components/admin/CategoryManager';
 import ArticleManager from '@/components/admin/ArticleManager';
-import { Users, FileText, FolderOpen, BarChart3, LogOut } from 'lucide-react';
+import { Users, FileText, FolderOpen, BarChart3, LogOut, Shield } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { logoutAdmin } = useAdminAuth();
+  const { signOut, user } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = '/';
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -24,10 +29,16 @@ const AdminDashboard = () => {
                 <span className="text-xs text-gray-500">Content Management</span>
               </div>
             </div>
-            <Button onClick={logoutAdmin} variant="outline" size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Shield className="w-4 h-4" />
+                <span>{user?.email}</span>
+              </div>
+              <Button onClick={handleSignOut} variant="outline" size="sm">
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -37,7 +48,7 @@ const AdminDashboard = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-600 mt-2">Welcome back, MSAdmin</p>
+              <p className="text-gray-600 mt-2">Welcome back, Administrator</p>
             </div>
           </div>
         </div>

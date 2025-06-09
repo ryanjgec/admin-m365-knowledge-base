@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -47,9 +47,10 @@ const CategoryManager = () => {
 
   const createCategoryMutation = useMutation({
     mutationFn: async (categoryData: any) => {
+      const id = categoryData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
       const { data, error } = await supabase
         .from('categories')
-        .insert([{ ...categoryData, id: categoryData.name.toLowerCase().replace(/\s+/g, '-') }])
+        .insert([{ ...categoryData, id }])
         .select()
         .single();
       
@@ -62,8 +63,12 @@ const CategoryManager = () => {
       setIsOpen(false);
       resetForm();
     },
-    onError: (error) => {
-      toast({ title: 'Error creating category', description: error.message, variant: 'destructive' });
+    onError: (error: any) => {
+      toast({ 
+        title: 'Error creating category', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     },
   });
 
@@ -85,8 +90,12 @@ const CategoryManager = () => {
       setIsOpen(false);
       resetForm();
     },
-    onError: (error) => {
-      toast({ title: 'Error updating category', description: error.message, variant: 'destructive' });
+    onError: (error: any) => {
+      toast({ 
+        title: 'Error updating category', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     },
   });
 
@@ -103,8 +112,12 @@ const CategoryManager = () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast({ title: 'Category deleted successfully' });
     },
-    onError: (error) => {
-      toast({ title: 'Error deleting category', description: error.message, variant: 'destructive' });
+    onError: (error: any) => {
+      toast({ 
+        title: 'Error deleting category', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     },
   });
 
@@ -132,10 +145,32 @@ const CategoryManager = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Input validation
+    if (!formData.name.trim()) {
+      toast({ title: 'Name is required', variant: 'destructive' });
+      return;
+    }
+    if (!formData.description.trim()) {
+      toast({ title: 'Description is required', variant: 'destructive' });
+      return;
+    }
+    if (!formData.icon.trim()) {
+      toast({ title: 'Icon is required', variant: 'destructive' });
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedData = {
+      name: formData.name.trim().slice(0, 100),
+      description: formData.description.trim().slice(0, 500),
+      icon: formData.icon.trim().slice(0, 10),
+      color: formData.color,
+    };
+    
     if (editingCategory) {
-      updateCategoryMutation.mutate({ id: editingCategory.id, ...formData });
+      updateCategoryMutation.mutate({ id: editingCategory.id, ...sanitizedData });
     } else {
-      createCategoryMutation.mutate(formData);
+      createCategoryMutation.mutate(sanitizedData);
     }
   };
 
@@ -160,12 +195,12 @@ const CategoryManager = () => {
         <h3 className="text-lg font-semibold">Manage Categories</h3>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="hover-scale">
+            <Button onClick={resetForm}>
               <Plus className="w-4 h-4 mr-2" />
               Add Category
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md animate-scale-in">
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>
                 {editingCategory ? 'Edit Category' : 'Add New Category'}
@@ -173,32 +208,35 @@ const CategoryManager = () => {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">Name *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  maxLength={100}
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  maxLength={500}
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="icon">Icon (emoji)</Label>
+                <Label htmlFor="icon">Icon (emoji) *</Label>
                 <Input
                   id="icon"
                   value={formData.icon}
                   onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
                   placeholder="📁"
+                  maxLength={10}
                   required
                 />
               </div>
@@ -223,7 +261,7 @@ const CategoryManager = () => {
                 <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="hover-scale">
+                <Button type="submit">
                   {editingCategory ? 'Update' : 'Create'}
                 </Button>
               </div>
@@ -233,12 +271,8 @@ const CategoryManager = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categories?.map((category, index) => (
-          <Card 
-            key={category.id} 
-            className="animate-fade-in hover-scale"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
+        {categories?.map((category) => (
+          <Card key={category.id}>
             <CardHeader className="text-center">
               <div className="text-3xl mb-2">{category.icon}</div>
               <CardTitle className="text-lg">{category.name}</CardTitle>
@@ -246,14 +280,13 @@ const CategoryManager = () => {
             </CardHeader>
             <CardContent className="flex justify-between items-center">
               <span className="text-sm text-gray-500">
-                {category.article_count} articles
+                {category.article_count || 0} articles
               </span>
               <div className="space-x-2">
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => handleEdit(category)}
-                  className="hover-scale"
                 >
                   <Edit className="w-3 h-3" />
                 </Button>
@@ -261,7 +294,6 @@ const CategoryManager = () => {
                   size="sm"
                   variant="destructive"
                   onClick={() => deleteCategoryMutation.mutate(category.id)}
-                  className="hover-scale"
                 >
                   <Trash2 className="w-3 h-3" />
                 </Button>

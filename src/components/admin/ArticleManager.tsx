@@ -85,8 +85,12 @@ const ArticleManager = () => {
       setIsOpen(false);
       resetForm();
     },
-    onError: (error) => {
-      toast({ title: 'Error creating article', description: error.message, variant: 'destructive' });
+    onError: (error: any) => {
+      toast({ 
+        title: 'Error creating article', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     },
   });
 
@@ -108,8 +112,12 @@ const ArticleManager = () => {
       setIsOpen(false);
       resetForm();
     },
-    onError: (error) => {
-      toast({ title: 'Error updating article', description: error.message, variant: 'destructive' });
+    onError: (error: any) => {
+      toast({ 
+        title: 'Error updating article', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     },
   });
 
@@ -126,8 +134,12 @@ const ArticleManager = () => {
       queryClient.invalidateQueries({ queryKey: ['articles'] });
       toast({ title: 'Article deleted successfully' });
     },
-    onError: (error) => {
-      toast({ title: 'Error deleting article', description: error.message, variant: 'destructive' });
+    onError: (error: any) => {
+      toast({ 
+        title: 'Error deleting article', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
     },
   });
 
@@ -161,10 +173,35 @@ const ArticleManager = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Input validation
+    if (!formData.title.trim()) {
+      toast({ title: 'Title is required', variant: 'destructive' });
+      return;
+    }
+    if (!formData.content.trim()) {
+      toast({ title: 'Content is required', variant: 'destructive' });
+      return;
+    }
+    if (!formData.category) {
+      toast({ title: 'Category is required', variant: 'destructive' });
+      return;
+    }
+
+    // Sanitize inputs
+    const sanitizedData = {
+      title: formData.title.trim().slice(0, 200),
+      excerpt: formData.excerpt.trim().slice(0, 300),
+      content: formData.content.trim().slice(0, 50000),
+      category: formData.category,
+      status: formData.status,
+      read_time: formData.read_time.trim().slice(0, 20),
+      featured: formData.featured,
+    };
+    
     if (editingArticle) {
-      updateArticleMutation.mutate({ id: editingArticle.id, ...formData });
+      updateArticleMutation.mutate({ id: editingArticle.id, ...sanitizedData });
     } else {
-      createArticleMutation.mutate(formData);
+      createArticleMutation.mutate(sanitizedData);
     }
   };
 
@@ -178,12 +215,12 @@ const ArticleManager = () => {
         <h3 className="text-lg font-semibold">Manage Articles</h3>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <Button onClick={resetForm} className="hover-scale">
+            <Button onClick={resetForm}>
               <Plus className="w-4 h-4 mr-2" />
               Add Article
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-2xl animate-scale-in max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingArticle ? 'Edit Article' : 'Add New Article'}
@@ -191,11 +228,12 @@ const ArticleManager = () => {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">Title *</Label>
                 <Input
                   id="title"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  maxLength={200}
                   required
                 />
               </div>
@@ -207,24 +245,29 @@ const ArticleManager = () => {
                   value={formData.excerpt}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                   rows={3}
+                  maxLength={300}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="content">Content</Label>
+                <Label htmlFor="content">Content *</Label>
                 <Textarea
                   id="content"
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   rows={10}
+                  maxLength={50000}
                   required
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
-                  <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                  <Label htmlFor="category">Category *</Label>
+                  <Select 
+                    value={formData.category} 
+                    onValueChange={(value) => setFormData({ ...formData, category: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
@@ -245,6 +288,7 @@ const ArticleManager = () => {
                     value={formData.read_time}
                     onChange={(e) => setFormData({ ...formData, read_time: e.target.value })}
                     placeholder="5 min read"
+                    maxLength={20}
                   />
                 </div>
               </div>
@@ -252,7 +296,10 @@ const ArticleManager = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="status">Status</Label>
-                  <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                  <Select 
+                    value={formData.status} 
+                    onValueChange={(value) => setFormData({ ...formData, status: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -279,7 +326,7 @@ const ArticleManager = () => {
                 <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" className="hover-scale">
+                <Button type="submit">
                   {editingArticle ? 'Update' : 'Create'}
                 </Button>
               </div>
@@ -289,12 +336,8 @@ const ArticleManager = () => {
       </div>
 
       <div className="space-y-4">
-        {articles?.map((article, index) => (
-          <Card 
-            key={article.id} 
-            className="animate-fade-in hover-scale"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
+        {articles?.map((article) => (
+          <Card key={article.id}>
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -316,7 +359,6 @@ const ArticleManager = () => {
                     size="sm"
                     variant="outline"
                     onClick={() => window.open(`/article/${article.id}`, '_blank')}
-                    className="hover-scale"
                   >
                     <Eye className="w-3 h-3" />
                   </Button>
@@ -324,7 +366,6 @@ const ArticleManager = () => {
                     size="sm"
                     variant="outline"
                     onClick={() => handleEdit(article)}
-                    className="hover-scale"
                   >
                     <Edit className="w-3 h-3" />
                   </Button>
@@ -332,7 +373,6 @@ const ArticleManager = () => {
                     size="sm"
                     variant="destructive"
                     onClick={() => deleteArticleMutation.mutate(article.id)}
-                    className="hover-scale"
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>
