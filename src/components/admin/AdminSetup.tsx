@@ -32,17 +32,13 @@ const AdminSetup = () => {
       const { data: profiles, error: profileError } = await supabase
         .from('profiles')
         .select('id, email')
-        .eq('email', userEmail.toLowerCase())
-        .limit(1);
+        .eq('email', userEmail.toLowerCase().trim())
+        .single();
 
       console.log('Profile search result:', { profiles, profileError });
 
-      if (profileError) {
+      if (profileError || !profiles) {
         console.error('Profile error:', profileError);
-        throw new Error(`Failed to find user profile: ${profileError.message}`);
-      }
-
-      if (!profiles || profiles.length === 0) {
         toast({
           title: "User Not Found",
           description: `No user found with email: ${userEmail}. The user must sign up first.`,
@@ -51,57 +47,25 @@ const AdminSetup = () => {
         return;
       }
 
-      const targetUserId = profiles[0].id;
-      console.log('Found user profile:', profiles[0]);
+      const targetUserId = profiles.id;
+      console.log('Found user profile:', profiles);
 
-      // Check if user already has a role
-      const { data: existingRole, error: roleCheckError } = await supabase
-        .from('user_roles')
-        .select('*')
-        .eq('user_id', targetUserId)
-        .limit(1);
+      // Use the RPC function to update the role
+      const { data, error: rpcError } = await supabase.rpc('update_user_role', {
+        target_user_id: targetUserId,
+        new_role: 'admin'
+      });
 
-      console.log('Role check result:', { existingRole, roleCheckError });
-
-      if (roleCheckError) {
-        console.error('Role check error:', roleCheckError);
-        throw new Error(`Failed to check existing role: ${roleCheckError.message}`);
+      if (rpcError) {
+        console.error('RPC error:', rpcError);
+        throw new Error(`Failed to update role: ${rpcError.message}`);
       }
 
-      if (existingRole && existingRole.length > 0) {
-        // Update existing role to admin
-        const { error: updateError } = await supabase
-          .from('user_roles')
-          .update({ role: 'admin' })
-          .eq('user_id', targetUserId);
-
-        if (updateError) {
-          console.error('Update role error:', updateError);
-          throw new Error(`Failed to update role: ${updateError.message}`);
-        }
-
-        console.log('Role updated successfully');
-        toast({
-          title: "Success!",
-          description: `${userEmail} role updated to admin`,
-        });
-      } else {
-        // Insert new admin role
-        const { error: insertError } = await supabase
-          .from('user_roles')
-          .insert([{ user_id: targetUserId, role: 'admin' }]);
-
-        if (insertError) {
-          console.error('Insert role error:', insertError);
-          throw new Error(`Failed to create admin role: ${insertError.message}`);
-        }
-
-        console.log('Admin role created successfully');
-        toast({
-          title: "Success!",
-          description: `${userEmail} is now an admin`,
-        });
-      }
+      console.log('Role updated successfully via RPC');
+      toast({
+        title: "Success!",
+        description: `${userEmail} is now an admin`,
+      });
 
       setEmail('');
       
@@ -179,7 +143,7 @@ const AdminSetup = () => {
           </Button>
 
           <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
-            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This tool works with the profiles table and user_roles table.</p>
+            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This tool uses the secure database functions.</p>
           </div>
         </CardContent>
       </Card>

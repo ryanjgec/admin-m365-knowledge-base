@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
 import ArticleCard from "@/components/ArticleCard";
 import TypingEffect from "@/components/TypingEffect";
+import HideLovableBadge from "@/components/HideLovableBadge";
 import { categories } from "@/data/categories";
 import { getFeaturedArticles } from "@/data/articles";
 
@@ -29,6 +30,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <HideLovableBadge />
       <Header />
       
       {/* Hero Section with recommended animations */}
