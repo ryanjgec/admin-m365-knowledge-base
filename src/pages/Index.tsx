@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, BookOpen, Users } from "lucide-react";
+import { BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,6 @@ import { categories } from "@/data/categories";
 import { getFeaturedArticles } from "@/data/articles";
 
 const Index = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const featuredArticles = getFeaturedArticles();
 
@@ -24,13 +23,6 @@ const Index = () => {
     "Simplifying M365 Administration...",
     "Your Trusted Knowledge Base..."
   ];
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   // Get total article count from all categories
   const totalArticles = featuredArticles.length;
@@ -55,26 +47,6 @@ const Index = () => {
           {/* Typing effect for tagline */}
           <div className="text-xl md:text-2xl mb-8 text-slate-200 max-w-3xl mx-auto h-16 flex items-center justify-center opacity-0 animate-fade-in-delayed">
             <TypingEffect phrases={typingPhrases} />
-          </div>
-          
-          {/* Slide-in search bar */}
-          <div className="max-w-2xl mx-auto mb-8 opacity-0 animate-slide-in-bottom">
-            <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                type="text"
-                placeholder="Search for articles, guides, and solutions..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-4 py-4 text-lg bg-white text-gray-900 border-0 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.02] focus:scale-[1.02]"
-              />
-              <Button 
-                type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#1B2A41] hover:bg-[#152030] transition-all duration-200 hover:scale-105"
-              >
-                Search
-              </Button>
-            </form>
           </div>
 
           {/* Stats Section in hero */}
