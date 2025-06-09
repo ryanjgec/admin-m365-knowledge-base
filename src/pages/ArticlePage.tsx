@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { CalendarDays, Clock, Eye, Heart, MessageCircle, Share2, ArrowLeft, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ const ArticlePage = () => {
     ? articles.filter(a => a.category === article.category && a.id !== article.id).slice(0, 3)
     : [];
 
-  useState(() => {
+  useEffect(() => {
     if (article) {
       setLikes(article.likes);
       setDislikes(article.dislikes);
