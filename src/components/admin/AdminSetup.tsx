@@ -24,23 +24,27 @@ const AdminSetup = () => {
     }
 
     setIsLoading(true);
+    
     try {
       console.log('Making user admin:', userEmail);
 
-      // Since we can't use admin API, we'll work with the user_roles table directly
       // First check if this email exists in our profiles table
       const { data: profiles, error: profileError } = await supabase
         .from('profiles')
         .select('id, email')
-        .eq('email', userEmail);
+        .eq('email', userEmail.toLowerCase())
+        .limit(1);
+
+      console.log('Profile search result:', { profiles, profileError });
 
       if (profileError) {
+        console.error('Profile error:', profileError);
         throw new Error(`Failed to find user profile: ${profileError.message}`);
       }
 
       if (!profiles || profiles.length === 0) {
         toast({
-          title: "Error",
+          title: "User Not Found",
           description: `No user found with email: ${userEmail}. The user must sign up first.`,
           variant: "destructive",
         });
@@ -55,37 +59,44 @@ const AdminSetup = () => {
         .from('user_roles')
         .select('*')
         .eq('user_id', targetUserId)
-        .single();
+        .limit(1);
 
-      if (roleCheckError && roleCheckError.code !== 'PGRST116') { // PGRST116 = no rows returned
+      console.log('Role check result:', { existingRole, roleCheckError });
+
+      if (roleCheckError) {
+        console.error('Role check error:', roleCheckError);
         throw new Error(`Failed to check existing role: ${roleCheckError.message}`);
       }
 
-      if (existingRole) {
-        // Update existing role
+      if (existingRole && existingRole.length > 0) {
+        // Update existing role to admin
         const { error: updateError } = await supabase
           .from('user_roles')
           .update({ role: 'admin' })
           .eq('user_id', targetUserId);
 
         if (updateError) {
+          console.error('Update role error:', updateError);
           throw new Error(`Failed to update role: ${updateError.message}`);
         }
 
+        console.log('Role updated successfully');
         toast({
           title: "Success!",
           description: `${userEmail} role updated to admin`,
         });
       } else {
-        // Insert new role
+        // Insert new admin role
         const { error: insertError } = await supabase
           .from('user_roles')
-          .insert({ user_id: targetUserId, role: 'admin' });
+          .insert([{ user_id: targetUserId, role: 'admin' }]);
 
         if (insertError) {
+          console.error('Insert role error:', insertError);
           throw new Error(`Failed to create admin role: ${insertError.message}`);
         }
 
+        console.log('Admin role created successfully');
         toast({
           title: "Success!",
           description: `${userEmail} is now an admin`,
@@ -155,6 +166,7 @@ const AdminSetup = () => {
               placeholder="Enter user email..."
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
             />
           </div>
           
@@ -167,7 +179,7 @@ const AdminSetup = () => {
           </Button>
 
           <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
-            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This tool works with the profiles table instead of requiring admin API access.</p>
+            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This tool works with the profiles table and user_roles table.</p>
           </div>
         </CardContent>
       </Card>
