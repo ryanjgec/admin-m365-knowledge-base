@@ -1,5 +1,5 @@
 
-import { User, ChevronDown } from "lucide-react";
+import { User, ChevronDown, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -7,16 +7,20 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
 import { categories } from "@/data/categories";
 
 const Header = () => {
+  const { user, userRole, signOut } = useAuth();
+
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 hover-scale">
             <div className="w-8 h-8 bg-ms-blue rounded flex items-center justify-center text-white font-bold text-sm">
               M
             </div>
@@ -30,17 +34,17 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-gray-600 hover:text-ms-blue">
+                <Button variant="ghost" className="text-gray-600 hover:text-ms-blue transition-colors">
                   Categories
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 bg-white shadow-lg border">
+              <DropdownMenuContent className="w-64 bg-white shadow-lg border z-50">
                 {categories.map((category) => (
                   <DropdownMenuItem key={category.id} asChild>
                     <Link 
                       to={`/category/${category.id}`}
-                      className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50"
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                     >
                       <span className="text-xl">{category.icon}</span>
                       <div>
@@ -62,10 +66,40 @@ const Header = () => {
 
           {/* User */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="text-gray-600">
-              <User className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="text-gray-600">
+                    <User className="w-4 h-4 mr-2" />
+                    {user.email}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-white shadow-lg border z-50">
+                  {userRole === 'admin' && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="flex items-center">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={signOut}>
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="sm" className="text-gray-600" asChild>
+                <Link to="/">
+                  <User className="w-4 h-4 mr-2" />
+                  Sign In
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>
