@@ -1,65 +1,134 @@
 
 import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Footer = () => {
+  const { user } = useAuth();
+  const currentYear = new Date().getFullYear();
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
+          {/* Company Info */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-ms-blue rounded flex items-center justify-center text-white font-bold text-sm">
                 M
               </div>
-              <span className="font-semibold text-lg">MicrosoftAdmin.in</span>
+              <span className="font-semibold">MicrosoftAdmin.in</span>
             </div>
-            <p className="text-gray-400 mb-4 max-w-md">
-              Your comprehensive knowledge base for Microsoft 365 administration. 
-              Get expert guidance, troubleshooting tips, and best practices.
+            <p className="text-gray-400 text-sm">
+              Your trusted resource for Microsoft 365 administration guides, tips, and best practices.
             </p>
-            <div className="space-y-2">
-              <h4 className="font-semibold mb-2">Newsletter</h4>
-              <div className="flex space-x-2">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400"
-                />
-                <button className="px-4 py-2 bg-ms-blue hover:bg-ms-blue-dark rounded text-white transition-colors">
-                  Subscribe
-                </button>
-              </div>
-            </div>
           </div>
 
-          {/* Categories */}
-          <div>
-            <h4 className="font-semibold mb-4">Categories</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><Link to="/category/outlook" className="hover:text-white transition-colors">Outlook & Exchange</Link></li>
-              <li><Link to="/category/teams" className="hover:text-white transition-colors">Teams Administration</Link></li>
-              <li><Link to="/category/intune" className="hover:text-white transition-colors">Intune & MDM</Link></li>
-              <li><Link to="/category/azure-ad" className="hover:text-white transition-colors">Azure AD & Identity</Link></li>
-              <li><Link to="/category/sharepoint" className="hover:text-white transition-colors">OneDrive & SharePoint</Link></li>
-              <li><Link to="/category/security" className="hover:text-white transition-colors">Security Portal</Link></li>
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">Quick Links</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/" className="text-gray-400 hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/articles" className="text-gray-400 hover:text-white transition-colors">
+                  All Articles
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Links */}
-          <div>
-            <h4 className="font-semibold mb-4">Site</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+          {/* Categories */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">Categories</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/category/exchange-online" className="text-gray-400 hover:text-white transition-colors">
+                  Exchange Online
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/teams" className="text-gray-400 hover:text-white transition-colors">
+                  Microsoft Teams
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/azure-ad" className="text-gray-400 hover:text-white transition-colors">
+                  Azure AD
+                </Link>
+              </li>
+              <li>
+                <Link to="/category/sharepoint" className="text-gray-400 hover:text-white transition-colors">
+                  SharePoint
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Account */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">Account</h3>
+            <ul className="space-y-2 text-sm">
+              {user ? (
+                <>
+                  <li className="text-gray-400">
+                    Signed in as: {user.email}
+                  </li>
+                  <li>
+                    <button className="text-gray-400 hover:text-white transition-colors text-left">
+                      Account Settings
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link to="/auth" className="text-gray-400 hover:text-white transition-colors">
+                      Sign In
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/auth?mode=signup" className="text-gray-400 hover:text-white transition-colors">
+                      Create Account
+                    </Link>
+                  </li>
+                </>
+              )}
+              <li>
+                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
+                  Support
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 MicrosoftAdmin.in. All rights reserved. Microsoft and Microsoft 365 are trademarks of Microsoft Corporation.</p>
+        <div className="border-t border-gray-800 mt-12 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-400 text-sm">
+              © {currentYear} MicrosoftAdmin.in. All rights reserved.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" className="text-gray-400 hover:text-white text-sm transition-colors">
+                Terms of Service
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

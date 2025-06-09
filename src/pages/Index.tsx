@@ -9,10 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
 import ArticleCard from "@/components/ArticleCard";
-import AuthModal from "@/components/AuthModal";
 import TypingEffect from "@/components/TypingEffect";
-import { useAuthPopup } from "@/hooks/useAuthPopup";
-import { useAuth } from "@/hooks/useAuth";
 import { categories } from "@/data/categories";
 import { getFeaturedArticles } from "@/data/articles";
 
@@ -20,8 +17,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const featuredArticles = getFeaturedArticles();
-  const { showAuthModal, setShowAuthModal } = useAuthPopup();
-  const { user } = useAuth();
 
   const typingPhrases = [
     "Your Microsoft 365 Admin Companion...",
@@ -220,14 +215,6 @@ const Index = () => {
       </section>
 
       <Footer />
-
-      {/* Auth Modal for 30-second popup */}
-      {!user && (
-        <AuthModal 
-          isOpen={showAuthModal} 
-          onClose={() => setShowAuthModal(false)} 
-        />
-      )}
     </div>
   );
 };
