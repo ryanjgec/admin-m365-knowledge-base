@@ -16,6 +16,7 @@ import SearchPage from "./pages/SearchPage";
 import AllArticlesPage from "./pages/AllArticlesPage";
 import NewsPage from "./pages/NewsPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminSetupPage from "./pages/AdminSetupPage";
 import AdminRoute from "./components/AdminRoute";
 import NotFound from "./pages/NotFound";
 import PrivacyPage from "./pages/PrivacyPage";
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/news" element={<NewsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/terms" element={<TermsPage />} />
+              <Route path="/admin-setup" element={<AdminSetupPage />} />
               <Route path="/admin" element={
                 <AdminRoute>
                   <AdminDashboard />

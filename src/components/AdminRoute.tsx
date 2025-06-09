@@ -4,7 +4,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Lock, Loader2, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Lock, Loader2, RefreshCw, Settings, User } from 'lucide-react';
 
 interface AdminRouteProps {
   children: ReactNode;
@@ -12,7 +12,7 @@ interface AdminRouteProps {
 
 const AdminRoute = ({ children }: AdminRouteProps) => {
   const { user, loading: authLoading } = useAuth();
-  const { isAdminAuthenticated, isCheckingAdmin, adminError } = useAdminAuth();
+  const { isAdminAuthenticated, isCheckingAdmin, adminError, recheckAdmin } = useAdminAuth();
 
   console.log('AdminRoute Debug Info:', {
     user: user?.email,
@@ -78,22 +78,24 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <AlertTriangle className="w-8 h-8 text-red-600" />
             </div>
-            <CardTitle className="text-2xl">Access Error</CardTitle>
-            <CardDescription>
-              {adminError}
-              <br />
-              <span className="text-sm">User: {user.email}</span>
-              <br />
-              <span className="text-xs">ID: {user.id}</span>
+            <CardTitle className="text-2xl">Admin Access Issue</CardTitle>
+            <CardDescription className="text-left">
+              <div className="space-y-2">
+                <p><strong>Error:</strong> {adminError}</p>
+                <div className="bg-gray-50 p-3 rounded text-xs">
+                  <p><strong>User:</strong> {user.email}</p>
+                  <p><strong>ID:</strong> {user.id}</p>
+                </div>
+              </div>
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-2">
             <Button 
-              onClick={() => window.location.reload()}
-              className="w-full mb-2"
+              onClick={recheckAdmin}
+              className="w-full"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Retry Check
+              Retry Admin Check
             </Button>
             <Button 
               onClick={() => window.location.href = '/'}
@@ -114,22 +116,32 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-8 h-8 text-red-600" />
+              <User className="w-8 h-8 text-red-600" />
             </div>
-            <CardTitle className="text-2xl">Access Denied</CardTitle>
+            <CardTitle className="text-2xl">Admin Access Required</CardTitle>
             <CardDescription>
-              You do not have administrator privileges to access this area
-              <br />
-              <span className="text-sm">Signed in as: {user.email}</span>
-              <br />
-              <span className="text-xs">User ID: {user.id}</span>
-              <br />
-              <span className="text-xs text-gray-500">
-                If you should have admin access, please contact support.
-              </span>
+              <div className="space-y-2 text-left">
+                <p>You need administrator privileges to access this area.</p>
+                <div className="bg-gray-50 p-3 rounded text-xs">
+                  <p><strong>Current User:</strong> {user.email}</p>
+                  <p><strong>Required Role:</strong> admin</p>
+                  <p><strong>Current Status:</strong> Regular user</p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Contact your system administrator to request admin access.
+                </p>
+              </div>
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-2">
+            <Button 
+              onClick={recheckAdmin}
+              className="w-full"
+              variant="outline"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Check Admin Status
+            </Button>
             <Button 
               onClick={() => window.location.href = '/'}
               className="w-full"
