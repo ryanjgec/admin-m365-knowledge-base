@@ -3,730 +3,893 @@ export interface Article {
   id: string;
   title: string;
   content: string;
+  excerpt: string;
   category: string;
+  tags: string[];
   publishedDate: string;
   readTime: number;
   viewCount: number;
-  tags: string[];
-  featured: boolean;
   likes: number;
   dislikes: number;
+  featured: boolean;
 }
 
 export const articles: Article[] = [
-  // Outlook & Exchange Online
+  // Outlook & Exchange Online Articles (10)
   {
-    id: "grant-full-access-permissions",
+    id: "outlook-1",
     title: "How to Grant Full Access and Send As Permissions in Exchange Online",
-    content: `
-# How to Grant Full Access and Send As Permissions in Exchange Online
-
-## Overview
-This comprehensive guide will walk you through the process of assigning mailbox permissions using both the Exchange Admin Center and PowerShell. These permissions are essential for scenarios where users need to access another user's mailbox or send emails on their behalf.
-
-## Permission Types
-- **Full Access**: Allows complete access to another user's mailbox
-- **Send As**: Allows sending emails as another user
-- **Send on Behalf**: Allows sending emails on behalf of another user (shows "on behalf of")
-
-## Using Exchange Admin Center
-
-### Step 1: Access Exchange Admin Center
-1. Sign in to the Microsoft 365 admin center
-2. Navigate to Exchange admin center
-3. Go to Recipients > Mailboxes
-
-### Step 2: Grant Full Access Permission
-1. Select the mailbox you want to grant access to
-2. Click on "Manage mailbox permissions"
-3. Under "Read and manage," click "Edit"
-4. Click "Add permissions"
-5. Search for and select the user
-6. Click "Save"
-
-### Step 3: Grant Send As Permission
-1. In the same mailbox permissions panel
-2. Under "Send as," click "Edit"
-3. Click "Add permissions"
-4. Search for and select the user
-5. Click "Save"
-
-## Using PowerShell
-
-### Connect to Exchange Online
-\`\`\`powershell
-Install-Module -Name ExchangeOnlineManagement
-Connect-ExchangeOnline -UserPrincipalName admin@yourdomain.com
-\`\`\`
-
-### Grant Full Access Permission
-\`\`\`powershell
-Add-MailboxPermission -Identity "SharedMailbox@yourdomain.com" -User "User@yourdomain.com" -AccessRights FullAccess -InheritanceType All
-\`\`\`
-
-### Grant Send As Permission
-\`\`\`powershell
-Add-RecipientPermission -Identity "SharedMailbox@yourdomain.com" -Trustee "User@yourdomain.com" -AccessRights SendAs -Confirm:$false
-\`\`\`
-
-## Verification Steps
-1. Check permissions using PowerShell:
-\`\`\`powershell
-Get-MailboxPermission -Identity "SharedMailbox@yourdomain.com" | Where-Object {$_.user -like "*User*"}
-Get-RecipientPermission -Identity "SharedMailbox@yourdomain.com" | Where-Object {$_.trustee -like "*User*"}
-\`\`\`
-
-2. Test access in Outlook client
-3. Verify the mailbox appears in the user's Outlook
-
-## Common Scenarios
-- **Shared Mailboxes**: Most common use case for team email addresses
-- **Executive Assistants**: Granting access to executive mailboxes
-- **Department Mailboxes**: Allowing multiple team members access
-- **Temporary Access**: For project-based collaboration
-
-## Troubleshooting Tips
-- Permissions may take up to 60 minutes to propagate
-- Clear Outlook cache if mailbox doesn't appear
-- Ensure the user has an Exchange Online license
-- Check for any Conditional Access policies blocking access
-
-## Best Practices
-- Use security groups for multiple users when possible
-- Document all permission assignments
-- Regularly audit mailbox permissions
-- Remove permissions when no longer needed
-- Use Send on Behalf instead of Send As when transparency is important
-    `,
+    content: "Step-by-step guide to assign mailbox permissions using both Exchange Admin Center and PowerShell. This includes common scenarios, permission types, and verification steps.\n\nTo grant full access permissions:\n1. Navigate to Exchange Admin Center\n2. Go to Recipients > Mailboxes\n3. Select the target mailbox\n4. Click on 'Manage mailbox permissions'\n5. Add the user and select appropriate permissions\n\nFor PowerShell method:\n`Add-MailboxPermission -Identity 'targetmailbox@domain.com' -User 'user@domain.com' -AccessRights FullAccess`",
+    excerpt: "Learn how to assign mailbox permissions using Exchange Admin Center and PowerShell with common scenarios and verification steps.",
     category: "outlook",
+    tags: ["Exchange Online", "Permissions", "PowerShell", "Mailbox"],
     publishedDate: "2024-01-15",
     readTime: 8,
-    viewCount: 2340,
-    tags: ["Exchange Online", "Permissions", "PowerShell", "Mailbox"],
-    featured: true,
-    likes: 89,
-    dislikes: 3
+    viewCount: 1250,
+    likes: 42,
+    dislikes: 3,
+    featured: true
   },
   {
-    id: "troubleshoot-outlook-connectivity",
+    id: "outlook-2",
     title: "Troubleshooting Outlook Connectivity Issues with Exchange Online",
-    content: `
-# Troubleshooting Outlook Connectivity Issues with Exchange Online
-
-## Overview
-This guide provides comprehensive methods to resolve common Outlook connectivity issues including "Disconnected" status, credential prompts, and sync problems with Exchange Online.
-
-## Common Symptoms
-- Outlook shows "Disconnected" or "Trying to connect"
-- Repeated password prompts
-- Emails not syncing properly
-- Send/Receive errors
-- Outlook freezes or crashes
-
-## Step 1: Check Autodiscover Settings
-
-### Verify Autodiscover Record
-\`\`\`powershell
-nslookup -type=cname autodiscover.yourdomain.com
-\`\`\`
-
-### Test Autodiscover Connectivity
-1. Hold Ctrl and right-click Outlook icon in system tray
-2. Select "Test E-mail AutoConfiguration"
-3. Enter email address and password
-4. Check "Use Guessmart" and "Secure Guessmart Authentication"
-5. Click "Test"
-
-## Step 2: Clear Outlook Credentials
-
-### Windows Credential Manager
-1. Open Control Panel > Credential Manager
-2. Select "Windows Credentials"
-3. Remove any entries related to Outlook or Office
-4. Restart Outlook
-
-### Registry Cleanup (Advanced Users)
-\`\`\`
-HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Common\\Identity\\Identities
-\`\`\`
-Delete the identity entries and restart Outlook.
-
-## Step 3: Office Online Repair
-
-### Quick Repair
-1. Go to Control Panel > Programs and Features
-2. Select Microsoft Office
-3. Click "Change" > "Quick Repair"
-4. Follow the wizard
-
-### Online Repair
-If Quick Repair doesn't work:
-1. Select "Online Repair" instead
-2. This will require internet connection and takes longer
-3. May require Office reinstallation
-
-## Step 4: Check Mailbox Move History
-
-### PowerShell Commands
-\`\`\`powershell
-Connect-ExchangeOnline
-Get-MoveRequest -Identity user@domain.com
-Get-MoveRequestStatistics -Identity user@domain.com
-\`\`\`
-
-If a mailbox move is in progress or failed, this can cause connectivity issues.
-
-## Step 5: Network Connectivity Tests
-
-### Test Office 365 Connectivity
-Use Microsoft's connectivity analyzer:
-- https://testconnectivity.microsoft.com
-- Run "Outlook Connectivity" test
-- Follow recommendations from results
-
-### Check Required URLs and IPs
-Ensure these are accessible:
-- *.outlook.office365.com
-- *.outlook.office.com
-- outlook.office365.com
-
-## Step 6: Create New Outlook Profile
-
-### Backup Current Profile
-1. Export .pst files for local data
-2. Note down account settings
-
-### Create New Profile
-1. Control Panel > Mail > Show Profiles
-2. Click "Add" to create new profile
-3. Enter account details
-4. Set as default profile
-5. Test connectivity
-
-## Step 7: Advanced Troubleshooting
-
-### Enable Outlook Logging
-1. Registry: HKEY_CURRENT_USER\\Software\\Microsoft\\Office\\16.0\\Outlook\\Options\\Mail
-2. Create DWORD: EnableLogging = 1
-3. Restart Outlook
-4. Check logs in %temp% folder
-
-### Check Exchange Online Health
-- Visit Office 365 Service Health dashboard
-- Look for any ongoing issues with Exchange Online
-- Check for maintenance windows
-
-## PowerShell Diagnostic Commands
-
-### Check User License and Status
-\`\`\`powershell
-Connect-MsolService
-Get-MsolUser -UserPrincipalName user@domain.com | Select-Object DisplayName,UserPrincipalName,isLicensed,Licenses
-\`\`\`
-
-### Verify Mailbox Properties
-\`\`\`powershell
-Connect-ExchangeOnline
-Get-Mailbox user@domain.com | Format-List
-Get-CasMailbox user@domain.com | Format-List
-\`\`\`
-
-## Prevention Tips
-- Keep Office updated with latest patches
-- Regularly clear Outlook cache
-- Monitor for failed mailbox moves
-- Implement proper DNS records
-- Train users on credential management
-
-## When to Escalate
-- Multiple users affected simultaneously
-- Connectivity issues persist after all troubleshooting
-- Suspect Exchange Online service issues
-- Complex hybrid environment problems
-    `,
+    content: "Methods to resolve 'Disconnected' status or credential prompts. Includes Autodiscover, mailbox move history, Office repair, and connectivity logs.\n\nCommon troubleshooting steps:\n1. Check Autodiscover configuration\n2. Verify account settings\n3. Clear cached credentials\n4. Run Office repair\n5. Check connectivity logs\n\nFor advanced troubleshooting, use the Microsoft Remote Connectivity Analyzer to test Autodiscover and other Exchange services.",
+    excerpt: "Comprehensive guide to resolve Outlook connectivity issues including Autodiscover problems and credential prompts.",
     category: "outlook",
+    tags: ["Outlook", "Connectivity", "Troubleshooting", "Autodiscover"],
+    publishedDate: "2024-01-12",
+    readTime: 10,
+    viewCount: 980,
+    likes: 38,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "outlook-3",
+    title: "Configuring Email Forwarding in Exchange Online",
+    content: "How to set up internal/external email forwarding for users or shared mailboxes. Includes security considerations and mail loop prevention tips.\n\nForwarding options:\n- Internal forwarding (within organization)\n- External forwarding (to external domains)\n- Shared mailbox forwarding\n\nSecurity considerations:\n- Review external forwarding policies\n- Monitor for mail loops\n- Implement appropriate restrictions",
+    excerpt: "Complete guide to email forwarding in Exchange Online with security best practices and loop prevention.",
+    category: "outlook",
+    tags: ["Email Forwarding", "Exchange Online", "Security"],
+    publishedDate: "2024-01-10",
+    readTime: 6,
+    viewCount: 756,
+    likes: 29,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "outlook-4",
+    title: "Setting Up Automatic Replies (Out of Office) via PowerShell",
+    content: "How to enable and customize auto-replies remotely. Useful for scenarios where users can't access their mailbox.\n\nPowerShell commands:\n`Set-MailboxAutoReplyConfiguration -Identity user@domain.com -AutoReplyState Enabled -InternalMessage 'Internal message' -ExternalMessage 'External message'`\n\nThis is particularly useful when users are locked out or when bulk configuration is needed.",
+    excerpt: "Learn to configure out-of-office replies using PowerShell for scenarios where users cannot access their mailbox.",
+    category: "outlook",
+    tags: ["PowerShell", "Auto-Reply", "Out of Office"],
+    publishedDate: "2024-01-08",
+    readTime: 5,
+    viewCount: 623,
+    likes: 25,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "outlook-5",
+    title: "How to Enable Online Archive for a User Mailbox",
+    content: "Steps to enable in-place archiving, licensing requirements, and verification. Includes archive limits and storage management best practices.\n\nRequirements:\n- Exchange Online Plan 2 or Archive add-on license\n- Mailbox must be in Exchange Online\n\nTo enable:\n1. Go to Exchange Admin Center\n2. Navigate to Recipients > Mailboxes\n3. Select user and enable archive\n4. Verify archive creation",
+    excerpt: "Complete guide to enabling online archives including licensing requirements and storage management.",
+    category: "outlook",
+    tags: ["Archive", "Storage", "Licensing"],
+    publishedDate: "2024-01-05",
+    readTime: 7,
+    viewCount: 567,
+    likes: 22,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "outlook-6",
+    title: "Common Issues with Shared Mailboxes in Outlook",
+    content: "A guide to fix issues like mailbox not appearing, delayed sync, and permission errors. Includes Outlook profile reset and registry cleanup tips.\n\nCommon issues:\n- Shared mailbox not visible\n- Sync delays\n- Permission errors\n- Send-as problems\n\nSolutions include profile recreation, registry cleanup, and permission verification.",
+    excerpt: "Troubleshoot shared mailbox issues including visibility problems, sync delays, and permission errors.",
+    category: "outlook",
+    tags: ["Shared Mailbox", "Troubleshooting", "Permissions"],
+    publishedDate: "2024-01-03",
+    readTime: 9,
+    viewCount: 892,
+    likes: 35,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "outlook-7",
+    title: "Using Message Trace in Exchange Online to Track Email Delivery",
+    content: "How to track emails using the Exchange Admin Center and PowerShell. Scenarios include NDRs, missing emails, and spam filtering.\n\nMessage trace helps with:\n- Tracking email delivery\n- Investigating NDRs\n- Finding missing emails\n- Understanding spam filtering\n\nUse both GUI and PowerShell methods for comprehensive tracking.",
+    excerpt: "Master message tracing to investigate email delivery issues, NDRs, and spam filtering problems.",
+    category: "outlook",
+    tags: ["Message Trace", "Email Delivery", "Troubleshooting"],
+    publishedDate: "2024-01-01",
+    readTime: 8,
+    viewCount: 734,
+    likes: 31,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "outlook-8",
+    title: "Managing Retention Policies in Exchange Online",
+    content: "How to create and apply retention tags and policies to mailboxes. Best practices for legal, compliance, and user data cleanup.\n\nRetention policies help with:\n- Compliance requirements\n- Storage management\n- Legal holds\n- Automated cleanup\n\nImplement appropriate policies based on organizational needs.",
+    excerpt: "Comprehensive guide to retention policies for compliance, legal requirements, and storage management.",
+    category: "outlook",
+    tags: ["Retention Policy", "Compliance", "Storage"],
+    publishedDate: "2023-12-28",
+    readTime: 12,
+    viewCount: 645,
+    likes: 28,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "outlook-9",
+    title: "Outlook Search Not Working – Causes and Fixes",
+    content: "Fixing indexing issues in cached mode and shared mailboxes. Includes local rebuild, server search dependency, and user-side actions.\n\nCommon causes:\n- Indexing problems\n- Cached mode issues\n- Shared mailbox search problems\n- Server-side indexing delays\n\nSolutions include rebuilding search index and adjusting search settings.",
+    excerpt: "Solve Outlook search problems with indexing fixes for cached mode and shared mailboxes.",
+    category: "outlook",
+    tags: ["Search", "Indexing", "Troubleshooting"],
+    publishedDate: "2023-12-25",
+    readTime: 7,
+    viewCount: 543,
+    likes: 24,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "outlook-10",
+    title: "Delegating Calendar Access in Outlook – Do's and Don'ts",
+    content: "Best practices and steps to assign Editor, Reviewer, and Delegate access. Includes PowerShell commands and tips to avoid sync conflicts.\n\nPermission levels:\n- Reviewer: Read-only access\n- Editor: Read and edit\n- Delegate: Full control\n\nBest practices include proper permission assignment and conflict avoidance.",
+    excerpt: "Master calendar delegation with best practices for different permission levels and conflict prevention.",
+    category: "outlook",
+    tags: ["Calendar", "Delegation", "Permissions"],
+    publishedDate: "2023-12-22",
+    readTime: 6,
+    viewCount: 467,
+    likes: 21,
+    dislikes: 0,
+    featured: false
+  },
+
+  // Teams Administration Articles (10)
+  {
+    id: "teams-1",
+    title: "How to Create and Manage Teams via Teams Admin Center",
+    content: "Step-by-step guide to create teams, manage settings, and assign owners. Includes naming conventions, expiration policies, and team lifecycle management.\n\nTeam creation process:\n1. Access Teams Admin Center\n2. Navigate to Teams management\n3. Create new team\n4. Configure settings and policies\n5. Assign owners and members\n\nImplement proper naming conventions and lifecycle policies.",
+    excerpt: "Complete guide to creating and managing Teams through the admin center with lifecycle management best practices.",
+    category: "teams",
+    tags: ["Teams Admin", "Team Management", "Lifecycle"],
+    publishedDate: "2024-01-14",
+    readTime: 9,
+    viewCount: 876,
+    likes: 33,
+    dislikes: 1,
+    featured: true
+  },
+  {
+    id: "teams-2",
+    title: "Enabling Microsoft Teams for New Users via Licensing",
+    content: "How to ensure Teams is properly licensed and enabled for end users. Includes licensing tiers (E1/E3/E5), user-level and group-based license assignment.\n\nLicensing options:\n- Microsoft 365 E1/E3/E5\n- Teams Essentials\n- Business plans\n\nEnsure proper license assignment for full functionality.",
+    excerpt: "Understand Teams licensing requirements and how to properly assign licenses to new users.",
+    category: "teams",
+    tags: ["Licensing", "User Management", "Teams Setup"],
+    publishedDate: "2024-01-11",
+    readTime: 7,
+    viewCount: 692,
+    likes: 27,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "teams-3",
+    title: "Troubleshooting Teams Dial Pad Not Appearing",
+    content: "Common causes for missing dial pad (Phone System licensing, voice routing, etc.). Includes troubleshooting steps in Teams Admin Center and PowerShell.\n\nRequirements for dial pad:\n- Phone System license\n- Calling plan or Direct Routing\n- Proper voice routing\n- User enablement\n\nTroubleshoot using admin center and PowerShell commands.",
+    excerpt: "Fix missing Teams dial pad issues by checking licensing, voice routing, and user enablement.",
+    category: "teams",
+    tags: ["Phone System", "Dial Pad", "Voice", "Troubleshooting"],
+    publishedDate: "2024-01-09",
+    readTime: 8,
+    viewCount: 534,
+    likes: 23,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "teams-4",
+    title: "Setting Up Teams Meeting Policies",
+    content: "How to define and apply meeting policies (recording, screen share, lobby bypass). Includes creating custom policies and assigning them to user groups.\n\nMeeting policy settings:\n- Recording permissions\n- Screen sharing options\n- Lobby bypass rules\n- Anonymous join settings\n\nCreate targeted policies for different user groups.",
+    excerpt: "Configure Teams meeting policies for recording, sharing, and lobby settings with group-based assignments.",
+    category: "teams",
+    tags: ["Meeting Policy", "Governance", "Security"],
+    publishedDate: "2024-01-07",
+    readTime: 10,
+    viewCount: 789,
+    likes: 35,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "teams-5",
+    title: "Managing External Access vs. Guest Access in Microsoft Teams",
+    content: "Key differences between External and Guest access and how to control them. Includes security considerations, allowed domains, and governance practices.\n\nAccess types:\n- External access: Federation\n- Guest access: B2B collaboration\n\nEach has different capabilities and security implications. Configure based on organizational needs.",
+    excerpt: "Understand the differences between external and guest access with security and governance best practices.",
+    category: "teams",
+    tags: ["External Access", "Guest Access", "Security", "B2B"],
+    publishedDate: "2024-01-04",
+    readTime: 11,
+    viewCount: 643,
+    likes: 29,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "teams-6",
+    title: "Teams Room Devices: Admin Tasks and Monitoring",
+    content: "Day-to-day admin tasks for Microsoft Teams Room (MTR) setups. Includes Intune enrollment, device health monitoring, and update management.\n\nMTR management:\n- Device enrollment\n- Health monitoring\n- Update management\n- Policy application\n- Troubleshooting\n\nUse Teams Admin Center for comprehensive device management.",
+    excerpt: "Manage Teams Room devices with enrollment, monitoring, and update management best practices.",
+    category: "teams",
+    tags: ["Teams Rooms", "Device Management", "Monitoring"],
+    publishedDate: "2024-01-02",
+    readTime: 12,
+    viewCount: 456,
+    likes: 19,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "teams-7",
+    title: "Troubleshooting Teams Client Login and Sync Issues",
+    content: "How to resolve sign-in loops, stuck loading, and sync delays. Includes cache clearing, Office sign-out, Teams logs, and known error codes.\n\nCommon issues:\n- Sign-in loops\n- Sync delays\n- Loading problems\n- Authentication errors\n\nSolutions include cache clearing and credential reset.",
+    excerpt: "Resolve Teams client issues including sign-in problems, sync delays, and authentication errors.",
+    category: "teams",
+    tags: ["Client Issues", "Authentication", "Sync", "Troubleshooting"],
+    publishedDate: "2023-12-30",
+    readTime: 9,
+    viewCount: 712,
+    likes: 32,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "teams-8",
+    title: "Managing Teams via PowerShell – Basic to Advanced Commands",
+    content: "Key PowerShell cmdlets for team creation, membership, and settings. Includes scripting tips and use cases for bulk actions.\n\nUseful cmdlets:\n- New-Team\n- Add-TeamUser\n- Set-TeamSettings\n- Get-TeamChannel\n\nPowerShell enables bulk operations and automation for large deployments.",
+    excerpt: "Master Teams PowerShell commands for automation, bulk operations, and advanced management tasks.",
+    category: "teams",
+    tags: ["PowerShell", "Automation", "Bulk Operations"],
+    publishedDate: "2023-12-27",
+    readTime: 13,
+    viewCount: 598,
+    likes: 26,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "teams-9",
+    title: "Teams Compliance: eDiscovery and Retention Policies",
+    content: "Ensuring Teams messages and files are compliant with org policies. Includes eDiscovery holds, Teams message retention, and DLP policies.\n\nCompliance features:\n- eDiscovery holds\n- Retention policies\n- DLP policies\n- Legal holds\n- Audit logging\n\nImplement comprehensive compliance strategies for Teams data.",
+    excerpt: "Implement Teams compliance with eDiscovery, retention policies, and data loss prevention.",
+    category: "teams",
+    tags: ["Compliance", "eDiscovery", "Retention", "DLP"],
+    publishedDate: "2023-12-24",
+    readTime: 14,
+    viewCount: 387,
+    likes: 18,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "teams-10",
+    title: "Controlling App Permissions and Third-Party Integrations in Teams",
+    content: "How to manage which apps users can install or access in Teams. Includes app permission policies, setup policies, and best practices for security.\n\nApp management:\n- Permission policies\n- Setup policies\n- Custom app policies\n- Security considerations\n\nControl app ecosystem while maintaining productivity.",
+    excerpt: "Manage Teams app permissions and third-party integrations with security-focused policies.",
+    category: "teams",
+    tags: ["App Management", "Permissions", "Security", "Third-party"],
+    publishedDate: "2023-12-21",
+    readTime: 10,
+    viewCount: 521,
+    likes: 24,
+    dislikes: 1,
+    featured: false
+  },
+
+  // Intune & MDM Articles (10)
+  {
+    id: "intune-1",
+    title: "Enrolling Windows Devices in Microsoft Intune",
+    content: "How to enroll Windows 10/11 devices using Azure AD Join or Autopilot. Includes prerequisites, enrollment methods, and troubleshooting onboarding issues.\n\nEnrollment methods:\n- Azure AD Join\n- Windows Autopilot\n- Manual enrollment\n- Bulk enrollment\n\nEach method has specific use cases and requirements.",
+    excerpt: "Complete guide to Windows device enrollment in Intune using various methods including Autopilot.",
+    category: "intune",
+    tags: ["Device Enrollment", "Windows", "Autopilot", "Azure AD"],
+    publishedDate: "2024-01-13",
+    readTime: 11,
+    viewCount: 823,
+    likes: 37,
+    dislikes: 1,
+    featured: true
+  },
+  {
+    id: "intune-2",
+    title: "Deploying Applications via Intune",
+    content: "Steps to deploy Win32, MSI, and Microsoft Store apps to user or device groups. Includes detection rules, requirement settings, and retry behavior.\n\nApp types:\n- Win32 applications\n- MSI packages\n- Microsoft Store apps\n- Web apps\n\nConfigure proper detection rules and assignment settings.",
+    excerpt: "Deploy applications through Intune with proper detection rules and assignment configurations.",
+    category: "intune",
+    tags: ["App Deployment", "Win32", "MSI", "Store Apps"],
     publishedDate: "2024-01-10",
     readTime: 12,
-    viewCount: 1890,
-    tags: ["Outlook", "Connectivity", "Troubleshooting", "Exchange Online"],
-    featured: false,
-    likes: 67,
-    dislikes: 5
+    viewCount: 756,
+    likes: 34,
+    dislikes: 2,
+    featured: false
   },
-  // Teams Administration
   {
-    id: "create-manage-teams-admin",
-    title: "How to Create and Manage Teams via Teams Admin Center",
-    content: `
-# How to Create and Manage Teams via Teams Admin Center
-
-## Overview
-This comprehensive guide covers the creation and management of Microsoft Teams through the Teams Admin Center, including naming conventions, expiration policies, and team lifecycle management.
-
-## Accessing Teams Admin Center
-1. Sign in to Microsoft 365 admin center
-2. Navigate to "Show all" > "Teams" 
-3. Or go directly to https://admin.teams.microsoft.com
-4. Ensure you have Teams Administrator or Global Administrator role
-
-## Creating Teams
-
-### Method 1: Teams Admin Center
-1. Go to Teams > Manage teams
-2. Click "+ Add" to create new team
-3. Choose team type:
-   - **Private**: Only team owners can add members
-   - **Public**: Anyone in organization can join
-   - **Org-wide**: Everyone in organization is automatically added
-
-### Method 2: PowerShell
-\`\`\`powershell
-Install-Module -Name MicrosoftTeams
-Connect-MicrosoftTeams
-
-# Create a new team
-New-Team -DisplayName "Marketing Team" -Description "Marketing department collaboration" -Visibility Private
-\`\`\`
-
-## Team Settings Configuration
-
-### General Settings
-- **Team Name**: Clear, descriptive names following naming convention
-- **Description**: Detailed purpose and scope
-- **Team Picture**: Professional image representing the team
-- **Privacy Level**: Private, Public, or Org-wide
-
-### Member Permissions
-Configure what team members can do:
-- Create channels
-- Delete channels
-- Add/remove apps
-- Create/edit/delete tabs
-- Create/edit/delete connectors
-
-### Guest Permissions
-Control external user capabilities:
-- Create/update/delete channels
-- Create/edit/delete tabs
-- Create/edit/delete connectors
-
-## Naming Conventions Best Practices
-
-### Recommended Structure
-\`\`\`
-[Department/Function]-[Purpose]-[Location/Region]
-Examples:
-- Marketing-Campaigns-NA
-- IT-Projects-Global
-- Sales-Training-EMEA
-\`\`\`
-
-### PowerShell to Enforce Naming Policy
-\`\`\`powershell
-# Set team naming policy
-$policy = @{
-    PrefixSuffixNamingRequirement = @{
-        Prefix = "TEAM-"
-        Suffix = "-2024"
-    }
-    CustomBlockedWordsList = @("Confidential", "Secret")
-}
-Set-AzureADDirectorySetting -Id (Get-AzureADDirectorySetting | Where-Object {$_.DisplayName -eq "Group.Unified"}).Id -DirectorySetting $policy
-\`\`\`
-
-## Team Lifecycle Management
-
-### Expiration Policies
-Set automatic expiration for unused teams:
-
-1. **Azure AD Groups Settings**:
-   - Navigate to Azure AD > Groups > Expiration
-   - Set group lifetime (e.g., 365 days)
-   - Choose notification timeline (e.g., 30 days before)
-
-2. **PowerShell Configuration**:
-\`\`\`powershell
-# Set group expiration policy
-New-AzureADMSGroupLifecyclePolicy -GroupLifetimeInDays 365 -ManagedGroupTypes "All" -AlternateNotificationEmails "admin@company.com"
-\`\`\`
-
-### Renewal Process
-- Team owners receive email notifications before expiration
-- Owners can renew teams through email link
-- Unreturned teams are automatically deleted
-- Deleted teams can be restored within 30 days
-
-## Managing Team Owners and Members
-
-### Adding Owners via Admin Center
-1. Go to Teams > Manage teams
-2. Select the team
-3. Go to Members tab
-4. Click "Add" and select users
-5. Choose role: Owner or Member
-
-### PowerShell Management
-\`\`\`powershell
-# Add team owner
-Add-TeamUser -GroupId "TeamGUID" -User "user@company.com" -Role Owner
-
-# Add team member
-Add-TeamUser -GroupId "TeamGUID" -User "user@company.com" -Role Member
-
-# Remove user from team
-Remove-TeamUser -GroupId "TeamGUID" -User "user@company.com"
-\`\`\`
-
-## Monitoring and Analytics
-
-### Teams Usage Reports
-1. Teams Admin Center > Analytics & reports > Usage reports
-2. Available reports:
-   - Teams usage report
-   - Teams user activity report
-   - Teams device usage report
-
-### Key Metrics to Monitor
-- Active users per team
-- Channel message count
-- File sharing activity
-- Meeting participation
-- App usage statistics
-
-## Team Templates
-
-### Creating Custom Templates
-1. Teams Admin Center > Teams > Team templates
-2. Click "Add" to create new template
-3. Configure:
-   - Base template (start from scratch or existing)
-   - Channels structure
-   - Apps and tabs
-   - Settings and permissions
-
-### PowerShell Template Creation
-\`\`\`powershell
-# Create team from template
-$template = Get-CsTeamsTemplate -OdataId "/api/teamTemplates/v1.0/com.microsoft.teams.template.ManageAProject"
-New-Team -Template $template -DisplayName "Project Alpha" -Description "Alpha project team"
-\`\`\`
-
-## Archiving and Deletion
-
-### When to Archive Teams
-- Project completion
-- Team no longer active
-- Seasonal teams
-- Compliance requirements
-
-### Archive Process
-1. Teams Admin Center > Teams > Manage teams
-2. Select team to archive
-3. Click "Archive"
-4. Confirm archival
-
-### PowerShell Archival
-\`\`\`powershell
-# Archive a team
-Set-TeamArchivedState -GroupId "TeamGUID" -Archived $true
-
-# Unarchive a team
-Set-TeamArchivedState -GroupId "TeamGUID" -Archived $false
-\`\`\`
-
-## Troubleshooting Common Issues
-
-### Team Creation Failures
-- Check user permissions and licenses
-- Verify naming policy compliance
-- Ensure Exchange Online mailbox exists
-- Check SharePoint site creation permissions
-
-### Performance Issues
-- Monitor team size (recommended max 10,000 members)
-- Review channel structure (max 200 private channels)
-- Check app and connector usage
-- Monitor file storage usage
-
-## Best Practices Summary
-1. Implement consistent naming conventions
-2. Set up expiration policies for team hygiene
-3. Train team owners on management responsibilities
-4. Regular monitoring and cleanup of unused teams
-5. Use templates for standardized team creation
-6. Document team governance policies
-7. Monitor usage analytics for optimization
-    `,
-    category: "teams",
+    id: "intune-3",
+    title: "Creating and Assigning Configuration Profiles in Intune",
+    content: "How to configure device settings such as password policies, BitLocker, and Wi-Fi. Includes profile types for Windows, macOS, iOS, and Android.\n\nProfile types:\n- Device restrictions\n- Password policies\n- Wi-Fi configurations\n- VPN settings\n- BitLocker policies\n\nTailor profiles for different platforms and use cases.",
+    excerpt: "Configure device settings across platforms using Intune configuration profiles and policies.",
+    category: "intune",
+    tags: ["Configuration Profiles", "Device Settings", "Security"],
     publishedDate: "2024-01-08",
-    readTime: 15,
-    viewCount: 1650,
-    tags: ["Teams", "Administration", "PowerShell", "Governance"],
-    featured: true,
-    likes: 78,
-    dislikes: 2
+    readTime: 10,
+    viewCount: 634,
+    likes: 28,
+    dislikes: 0,
+    featured: false
   },
-  // Security Portal
   {
-    id: "navigate-security-portal",
+    id: "intune-4",
+    title: "Setting Up Compliance Policies and Conditional Access",
+    content: "How to enforce compliance rules and block access for non-compliant devices. Includes sample policies (OS version, encryption, password), and integration with Azure Conditional Access.\n\nCompliance requirements:\n- OS version requirements\n- Encryption status\n- Password complexity\n- Jailbreak/root detection\n\nIntegrate with Conditional Access for enforcement.",
+    excerpt: "Enforce device compliance with policies integrated with Azure Conditional Access for security.",
+    category: "intune",
+    tags: ["Compliance", "Conditional Access", "Security", "Policies"],
+    publishedDate: "2024-01-06",
+    readTime: 13,
+    viewCount: 587,
+    likes: 31,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "intune-5",
+    title: "Troubleshooting Intune Device Sync and Enrollment Failures",
+    content: "Steps to identify and resolve common issues during device sync or enrollment. Includes logs, sync status interpretation, and known error codes.\n\nTroubleshooting steps:\n- Check enrollment status\n- Review error codes\n- Analyze logs\n- Retry enrollment\n- Contact support\n\nUse built-in troubleshooting tools and documentation.",
+    excerpt: "Diagnose and resolve Intune device sync and enrollment issues using logs and error codes.",
+    category: "intune",
+    tags: ["Troubleshooting", "Device Sync", "Enrollment", "Error Codes"],
+    publishedDate: "2024-01-04",
+    readTime: 9,
+    viewCount: 698,
+    likes: 26,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "intune-6",
+    title: "Using Intune Filters to Target Specific Devices or Users",
+    content: "How to use filters in Intune for precise assignment of apps and policies. Includes practical examples and syntax guidance.\n\nFilter capabilities:\n- Device properties\n- User attributes\n- Custom attributes\n- Complex expressions\n\nCreate targeted assignments with precise control.",
+    excerpt: "Use Intune filters for precise targeting of policies and applications to specific devices or users.",
+    category: "intune",
+    tags: ["Filters", "Targeting", "Assignment", "Policies"],
+    publishedDate: "2024-01-01",
+    readTime: 8,
+    viewCount: 445,
+    likes: 22,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "intune-7",
+    title: "Remote Actions with Intune: Wipe, Restart, and Sync",
+    content: "How to perform key remote actions from the Intune portal. Includes use cases, audit logs, and security implications.\n\nRemote actions:\n- Device wipe\n- Selective wipe\n- Restart device\n- Sync device\n- Lock device\n\nUnderstand security implications and audit requirements.",
+    excerpt: "Perform remote device actions through Intune with proper security considerations and audit trails.",
+    category: "intune",
+    tags: ["Remote Actions", "Device Management", "Security", "Audit"],
+    publishedDate: "2023-12-29",
+    readTime: 7,
+    viewCount: 567,
+    likes: 25,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "intune-8",
+    title: "Deploying PowerShell Scripts Using Intune",
+    content: "How to push PowerShell scripts to devices for configuration or automation. Includes script delivery process, execution policies, and error handling.\n\nScript deployment:\n- Script creation\n- Execution context\n- Assignment groups\n- Monitoring results\n- Error handling\n\nUse PowerShell for advanced device configuration.",
+    excerpt: "Deploy PowerShell scripts through Intune for device configuration and automation tasks.",
+    category: "intune",
+    tags: ["PowerShell", "Scripts", "Automation", "Configuration"],
+    publishedDate: "2023-12-26",
+    readTime: 10,
+    viewCount: 423,
+    likes: 19,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "intune-9",
+    title: "Managing Updates for Windows Devices Using Intune",
+    content: "Configure Windows Update rings and Feature Update deployments. Includes monitoring update status and deferral strategies.\n\nUpdate management:\n- Update rings\n- Feature updates\n- Quality updates\n- Deferral policies\n- Monitoring\n\nBalance security with stability using update policies.",
+    excerpt: "Manage Windows updates through Intune with rings, deferrals, and monitoring capabilities.",
+    category: "intune",
+    tags: ["Windows Updates", "Update Rings", "Feature Updates", "Monitoring"],
+    publishedDate: "2023-12-23",
+    readTime: 11,
+    viewCount: 512,
+    likes: 23,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "intune-10",
+    title: "Device Compliance Reporting and Analytics in Intune",
+    content: "Understanding built-in reports for device status, app deployments, and compliance. Includes how to export data and use Workbooks for advanced analysis.\n\nReporting features:\n- Compliance reports\n- App deployment status\n- Device inventory\n- Custom reports\n- Data export\n\nLeverage analytics for informed decision making.",
+    excerpt: "Utilize Intune reporting and analytics for device compliance, app deployment, and inventory management.",
+    category: "intune",
+    tags: ["Reporting", "Analytics", "Compliance", "Monitoring"],
+    publishedDate: "2023-12-20",
+    readTime: 9,
+    viewCount: 398,
+    likes: 17,
+    dislikes: 0,
+    featured: false
+  },
+
+  // Azure AD & Identity Articles (10)
+  {
+    id: "azure-ad-1",
+    title: "Understanding Azure AD User Types: Cloud-Only vs. Hybrid",
+    content: "Differences between cloud-only, synced (Hybrid), and guest accounts. Includes synchronization overview, tools like AAD Connect, and use cases.\n\nUser types:\n- Cloud-only users\n- Synced (Hybrid) users\n- Guest users\n- External users\n\nEach type has different management requirements and capabilities.",
+    excerpt: "Learn the differences between Azure AD user types and their management implications.",
+    category: "azure-ad",
+    tags: ["User Types", "Hybrid", "AAD Connect", "Identity"],
+    publishedDate: "2024-01-12",
+    readTime: 8,
+    viewCount: 734,
+    likes: 32,
+    dislikes: 1,
+    featured: true
+  },
+  {
+    id: "azure-ad-2",
+    title: "Enabling and Enforcing MFA for Users in Azure AD",
+    content: "How to enable MFA using security defaults or Conditional Access. Includes enrollment steps, user experience, and reporting MFA status.\n\nMFA methods:\n- Security defaults\n- Conditional Access\n- Per-user MFA\n- MFA policies\n\nChoose the right method for your organization's needs.",
+    excerpt: "Implement multi-factor authentication using various Azure AD methods and policies.",
+    category: "azure-ad",
+    tags: ["MFA", "Security", "Conditional Access", "Authentication"],
+    publishedDate: "2024-01-09",
+    readTime: 10,
+    viewCount: 892,
+    likes: 41,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "azure-ad-3",
+    title: "Configuring Conditional Access Policies in Azure AD",
+    content: "How to create and apply Conditional Access to secure access based on device, location, or user risk. Includes templates, best practices, and common pitfalls.\n\nPolicy components:\n- Assignments\n- Cloud apps\n- Conditions\n- Grant controls\n- Session controls\n\nStart with templates and customize based on needs.",
+    excerpt: "Create sophisticated Conditional Access policies for secure, risk-based access control.",
+    category: "azure-ad",
+    tags: ["Conditional Access", "Security", "Risk-based", "Policies"],
+    publishedDate: "2024-01-07",
+    readTime: 12,
+    viewCount: 678,
+    likes: 35,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "azure-ad-4",
+    title: "Monitoring Sign-in Logs and Risk Events in Azure AD",
+    content: "Using Azure AD logs to detect suspicious sign-ins and identity risks. Includes portal navigation, filters, and how to respond to risk events.\n\nLog types:\n- Sign-in logs\n- Audit logs\n- Risk detections\n- Provisioning logs\n\nUse filters and queries for effective monitoring.",
+    excerpt: "Monitor Azure AD activity with sign-in logs and risk detection for security insights.",
+    category: "azure-ad",
+    tags: ["Monitoring", "Logs", "Risk Detection", "Security"],
+    publishedDate: "2024-01-05",
+    readTime: 9,
+    viewCount: 567,
+    likes: 27,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "azure-ad-5",
+    title: "Managing Guest Access and B2B Collaboration in Azure AD",
+    content: "Steps to invite and manage external users securely. Includes access reviews, terms of use, and default permissions.\n\nB2B features:\n- Guest invitations\n- Access reviews\n- Terms of use\n- External identities\n- Cross-tenant access\n\nBalance collaboration with security requirements.",
+    excerpt: "Manage external user access and B2B collaboration with security and governance controls.",
+    category: "azure-ad",
+    tags: ["B2B", "Guest Access", "External Users", "Collaboration"],
+    publishedDate: "2024-01-03",
+    readTime: 11,
+    viewCount: 623,
+    likes: 29,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "azure-ad-6",
+    title: "Resetting User Passwords and MFA from the Admin Center",
+    content: "How to reset user credentials and MFA settings. Includes portal steps, limitations, and self-service recovery configuration.\n\nReset options:\n- Password reset\n- MFA reset\n- Account unlock\n- Sign-in restrictions\n\nUnderstand limitations and self-service alternatives.",
+    excerpt: "Reset user passwords and MFA settings through the admin center with proper procedures.",
+    category: "azure-ad",
+    tags: ["Password Reset", "MFA Reset", "User Management", "Admin"],
+    publishedDate: "2024-01-01",
+    readTime: 6,
+    viewCount: 789,
+    likes: 33,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "azure-ad-7",
+    title: "Implementing Role-Based Access Control (RBAC) in Azure AD",
+    content: "How to assign roles securely using PIM (Privileged Identity Management). Includes default roles, custom roles, and access reviews.\n\nRBAC concepts:\n- Built-in roles\n- Custom roles\n- PIM activation\n- Access reviews\n- Just-in-time access\n\nImplement least privilege principles.",
+    excerpt: "Implement secure role-based access control with PIM and just-in-time access principles.",
+    category: "azure-ad",
+    tags: ["RBAC", "PIM", "Roles", "Security", "Least Privilege"],
+    publishedDate: "2023-12-28",
+    readTime: 13,
+    viewCount: 456,
+    likes: 21,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "azure-ad-8",
+    title: "Configuring Self-Service Password Reset (SSPR)",
+    content: "Steps to enable SSPR for users and sync it with on-prem AD if applicable. Includes registration policies, reporting, and security questions.\n\nSSPR components:\n- Authentication methods\n- Registration policies\n- Notification settings\n- On-premises writeback\n- Reporting\n\nReduce helpdesk burden while maintaining security.",
+    excerpt: "Enable self-service password reset to reduce helpdesk burden while maintaining security standards.",
+    category: "azure-ad",
+    tags: ["SSPR", "Password Reset", "Self-Service", "User Experience"],
+    publishedDate: "2023-12-25",
+    readTime: 8,
+    viewCount: 645,
+    likes: 28,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "azure-ad-9",
+    title: "Blocking Legacy Authentication in Azure AD",
+    content: "Why legacy auth is a risk and how to block it using Conditional Access. Includes impact analysis and mitigation steps.\n\nLegacy auth risks:\n- No MFA support\n- Limited visibility\n- Security vulnerabilities\n- Compliance issues\n\nUse Conditional Access to block legacy protocols.",
+    excerpt: "Block legacy authentication protocols to improve security posture and enable modern authentication.",
+    category: "azure-ad",
+    tags: ["Legacy Auth", "Security", "Modern Auth", "Conditional Access"],
+    publishedDate: "2023-12-22",
+    readTime: 7,
+    viewCount: 534,
+    likes: 24,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "azure-ad-10",
+    title: "Automating Group Membership with Dynamic Groups",
+    content: "How to create dynamic user or device groups based on attributes. Includes sample rules, common use cases, and troubleshooting tips.\n\nDynamic groups:\n- User attributes\n- Device attributes\n- Rule syntax\n- Processing rules\n- Troubleshooting\n\nAutomate group membership for efficient management.",
+    excerpt: "Create dynamic groups that automatically manage membership based on user or device attributes.",
+    category: "azure-ad",
+    tags: ["Dynamic Groups", "Automation", "Group Management", "Attributes"],
+    publishedDate: "2023-12-19",
+    readTime: 9,
+    viewCount: 423,
+    likes: 19,
+    dislikes: 0,
+    featured: false
+  },
+
+  // OneDrive & SharePoint Articles (10)
+  {
+    id: "sharepoint-1",
+    title: "OneDrive vs SharePoint: When to Use What?",
+    content: "Explain the core differences, ideal use cases, and how to guide users. Includes storage limits, ownership, sharing differences, and admin controls.\n\nKey differences:\n- Personal vs team storage\n- Ownership models\n- Sharing capabilities\n- Admin controls\n- Use cases\n\nGuide users to the right platform for their needs.",
+    excerpt: "Understand when to use OneDrive versus SharePoint for different collaboration and storage scenarios.",
+    category: "sharepoint",
+    tags: ["OneDrive", "SharePoint", "Collaboration", "Storage"],
+    publishedDate: "2024-01-11",
+    readTime: 7,
+    viewCount: 812,
+    likes: 36,
+    dislikes: 1,
+    featured: true
+  },
+  {
+    id: "sharepoint-2",
+    title: "How to Restore Deleted Files from OneDrive or SharePoint",
+    content: "Step-by-step guide to recovering deleted files or folders. Includes recycle bin retention, second-stage bin, and restore site option.\n\nRecovery options:\n- First-stage recycle bin\n- Second-stage recycle bin\n- Site collection restoration\n- Version history\n- Admin restoration\n\nAct quickly as retention periods apply.",
+    excerpt: "Recover deleted files and folders using various restoration methods in OneDrive and SharePoint.",
+    category: "sharepoint",
+    tags: ["File Recovery", "Recycle Bin", "Restoration", "Backup"],
+    publishedDate: "2024-01-08",
+    readTime: 8,
+    viewCount: 723,
+    likes: 32,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "sharepoint-3",
+    title: "Managing External Sharing Settings in SharePoint & OneDrive",
+    content: "How to control external access across the tenant or at site level. Includes policy configuration, permission levels, audit tracking.\n\nSharing controls:\n- Tenant-level settings\n- Site-level settings\n- Link types\n- Expiration policies\n- Audit tracking\n\nBalance collaboration with security requirements.",
+    excerpt: "Configure external sharing policies to balance collaboration needs with security requirements.",
+    category: "sharepoint",
+    tags: ["External Sharing", "Security", "Policies", "Governance"],
+    publishedDate: "2024-01-06",
+    readTime: 10,
+    viewCount: 634,
+    likes: 28,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "sharepoint-4",
+    title: "OneDrive Known Folder Move (KFM): Setup and Troubleshooting",
+    content: "Enabling Desktop/Documents/Pictures redirection to OneDrive. Includes GPO/Intune configuration, common errors, user experience.\n\nKFM benefits:\n- Automatic backup\n- Cross-device access\n- Seamless sync\n- Data protection\n\nConfigure using GPO or Intune for enterprise deployment.",
+    excerpt: "Deploy Known Folder Move to automatically backup user folders to OneDrive with proper configuration.",
+    category: "sharepoint",
+    tags: ["Known Folder Move", "OneDrive", "Backup", "GPO", "Intune"],
+    publishedDate: "2024-01-04",
+    readTime: 9,
+    viewCount: 567,
+    likes: 25,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "sharepoint-5",
+    title: "How to Grant and Manage Access to SharePoint Sites",
+    content: "Step-by-step instructions for adding members and permission levels. Includes Owner vs Member vs Visitor roles, SharePoint groups, and best practices.\n\nPermission levels:\n- Full Control\n- Edit\n- Contribute\n- Read\n- Custom levels\n\nUse SharePoint groups for efficient permission management.",
+    excerpt: "Manage SharePoint site permissions with proper role assignment and group-based access control.",
+    category: "sharepoint",
+    tags: ["Permissions", "Site Access", "SharePoint Groups", "Security"],
+    publishedDate: "2024-01-02",
+    readTime: 8,
+    viewCount: 698,
+    likes: 31,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "sharepoint-6",
+    title: "OneDrive Storage Quota Management and Monitoring",
+    content: "Adjusting quotas, viewing usage, and dealing with full accounts. Includes PowerShell commands and E3/E5 plan limits.\n\nQuota management:\n- Default quotas\n- Individual adjustments\n- Usage monitoring\n- Cleanup strategies\n- Plan limits\n\nMonitor usage and adjust quotas proactively.",
+    excerpt: "Manage OneDrive storage quotas and monitor usage to optimize storage allocation across users.",
+    category: "sharepoint",
+    tags: ["Storage Quota", "Usage Monitoring", "PowerShell", "Management"],
+    publishedDate: "2023-12-30",
+    readTime: 7,
+    viewCount: 456,
+    likes: 22,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "sharepoint-7",
+    title: "Syncing SharePoint Document Libraries via OneDrive Client",
+    content: "How to sync libraries for offline use and manage sync issues. Includes sync icon meanings, common error resolutions, and un-linking steps.\n\nSync features:\n- Library synchronization\n- Offline access\n- Files On-Demand\n- Sync health\n- Troubleshooting\n\nOptimize sync settings for user productivity.",
+    excerpt: "Configure SharePoint library sync with OneDrive client for offline access and productivity.",
+    category: "sharepoint",
+    tags: ["Sync", "OneDrive Client", "Offline Access", "Libraries"],
+    publishedDate: "2023-12-27",
+    readTime: 9,
+    viewCount: 578,
+    likes: 26,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "sharepoint-8",
+    title: "SharePoint Site Lifecycle: Creation, Retention & Deletion",
+    content: "Site provisioning, retention policies, and when/how sites get deleted. Includes auto-expiry, hub sites, and restoring deleted sites.\n\nLifecycle management:\n- Site creation\n- Retention policies\n- Expiry settings\n- Deletion process\n- Site restoration\n\nImplement governance for site lifecycle management.",
+    excerpt: "Manage SharePoint site lifecycle with creation policies, retention rules, and governance controls.",
+    category: "sharepoint",
+    tags: ["Site Lifecycle", "Governance", "Retention", "Site Management"],
+    publishedDate: "2023-12-24",
+    readTime: 11,
+    viewCount: 423,
+    likes: 19,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "sharepoint-9",
+    title: "Auditing File Activities in SharePoint and OneDrive",
+    content: "How to track file modifications, downloads, and sharing activity. Includes Microsoft Purview, audit search, and retention period details.\n\nAudit capabilities:\n- File activities\n- Sharing events\n- Access attempts\n- Permission changes\n- Search and export\n\nUse audit logs for compliance and security monitoring.",
+    excerpt: "Track file activities and sharing events in SharePoint and OneDrive for compliance and security.",
+    category: "sharepoint",
+    tags: ["Auditing", "File Tracking", "Compliance", "Security"],
+    publishedDate: "2023-12-21",
+    readTime: 10,
+    viewCount: 512,
+    likes: 23,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "sharepoint-10",
+    title: "Preventing Data Loss: DLP Policies for OneDrive and SharePoint",
+    content: "How to apply and manage Data Loss Prevention (DLP) policies. Includes sensitive info types, alerting, and compliance insights.\n\nDLP features:\n- Sensitive info detection\n- Policy enforcement\n- User notifications\n- Admin alerts\n- Compliance reporting\n\nProtect sensitive data with comprehensive DLP policies.",
+    excerpt: "Implement Data Loss Prevention policies to protect sensitive information in OneDrive and SharePoint.",
+    category: "sharepoint",
+    tags: ["DLP", "Data Protection", "Compliance", "Sensitive Info"],
+    publishedDate: "2023-12-18",
+    readTime: 12,
+    viewCount: 387,
+    likes: 17,
+    dislikes: 0,
+    featured: false
+  },
+
+  // Security Portal Articles (10)
+  {
+    id: "security-1",
     title: "Navigating the Microsoft 365 Security Portal: A Beginner's Guide",
-    content: `
-# Navigating the Microsoft 365 Security Portal: A Beginner's Guide
-
-## Overview
-The Microsoft 365 Security Portal (also known as Microsoft Defender portal) is your central hub for managing security across your Microsoft 365 environment. This guide provides a comprehensive walkthrough of the portal layout, key sections, and essential features.
-
-## Accessing the Security Portal
-- **URL**: https://security.microsoft.com
-- **Required Roles**: Security Administrator, Security Reader, Global Administrator
-- **Alternative Access**: Microsoft 365 admin center > Security
-
-## Portal Dashboard Overview
-
-### Main Navigation Menu
-The left-side navigation contains these key sections:
-
-1. **Home**: Dashboard overview and quick actions
-2. **Incidents & alerts**: Centralized alert management
-3. **Hunting**: Advanced threat hunting capabilities
-4. **Action center**: Automated and manual remediation actions
-5. **Threat analytics**: Intelligence on current threats
-6. **Secure Score**: Security posture measurement
-7. **Learning hub**: Training and documentation resources
-
-### Dashboard Widgets
-The main dashboard displays:
-- **Security overview**: High-level security status
-- **Incidents**: Active security incidents requiring attention
-- **Secure Score**: Current score and improvement recommendations
-- **Device compliance**: Endpoint security status
-- **Identity security**: Authentication and access insights
-
-## Key Portal Sections
-
-### 1. Incidents & Alerts
-
-#### Incident Management
-- **Purpose**: Correlates related alerts into actionable incidents
-- **Views Available**:
-  - Incidents queue
-  - Alert queue
-  - Automated investigations
-
-#### Alert Types
-- **High Severity**: Immediate attention required
-- **Medium Severity**: Investigate within 24 hours
-- **Low Severity**: Monitor and review periodically
-- **Informational**: FYI alerts for awareness
-
-### 2. Threat Analytics
-
-#### Available Intelligence
-- **Threat reports**: Detailed analysis of current threats
-- **Analyst reports**: Expert insights on threat landscape
-- **Related incidents**: Incidents matching threat patterns
-- **Impacted assets**: Resources affected by threats
-
-#### Key Features
-- Real-time threat intelligence
-- IOC (Indicators of Compromise) tracking
-- Mitigation recommendations
-- Threat hunting queries
-
-### 3. Secure Score
-
-#### Score Components
-- **Current Score**: Your organization's security rating
-- **Max Score**: Maximum achievable score
-- **Comparison Score**: Industry benchmark
-- **Score History**: Trends over time
-
-#### Improvement Actions
-Categories include:
-- **Identity**: MFA, Conditional Access, Privileged accounts
-- **Device**: Compliance policies, endpoint protection
-- **Apps**: Application security, OAuth permissions
-- **Data**: Classification, protection policies
-
-### 4. Action Center
-
-#### Automated Actions
-- **Auto-remediation**: System-initiated responses
-- **Pending Actions**: Awaiting approval or user action
-- **Completed Actions**: Historical remediation activities
-
-#### Manual Actions
-- **Threat hunting**: User-initiated investigations
-- **Device actions**: Isolate, scan, collect investigation package
-- **Email actions**: Delete, quarantine, move to folders
-
-## Email & Collaboration Security
-
-### Microsoft Defender for Office 365
-Access through: **Email & collaboration** section
-
-#### Key Features
-- **Threat protection**: Anti-phishing, safe attachments, safe links
-- **Investigation tools**: Threat Explorer, real-time detections
-- **Response capabilities**: Automated investigation and response (AIR)
-
-#### Threat Explorer
-- **Purpose**: Investigate email threats and attacks
-- **Views**:
-  - Malware
-  - Phish
-  - Campaigns
-  - All email
-
-### Safe Attachments & Links
-- **Safe Attachments**: Detonates files in sandbox environment
-- **Safe Links**: Scans URLs at click-time
-- **Configuration**: Policies section under Email & collaboration
-
-## Endpoints Security
-
-### Microsoft Defender for Endpoint
-Access through: **Endpoints** section
-
-#### Device Management
-- **Device inventory**: All managed endpoints
-- **Vulnerability management**: Security recommendations
-- **Attack surface reduction**: Proactive protection rules
-
-#### Threat & Vulnerability Management
-- **Dashboards**: Security posture overview
-- **Recommendations**: Prioritized security improvements
-- **Remediation**: Track and manage vulnerability fixes
-
-## Cloud Apps Security
-
-### Microsoft Defender for Cloud Apps
-Access through: **Cloud apps** section
-
-#### App Discovery
-- **Shadow IT**: Discover unmanaged cloud applications
-- **Risk assessment**: Evaluate app security posture
-- **Usage analytics**: Monitor cloud app consumption
-
-#### Protection Policies
-- **Access policies**: Control user access to cloud apps
-- **Activity policies**: Monitor and alert on user activities
-- **File policies**: Protect sensitive data in cloud storage
-
-## Identity Security
-
-### Microsoft Defender for Identity
-Access through: **Identities** section
-
-#### Monitoring Capabilities
-- **Identity timeline**: User activity tracking
-- **Lateral movement paths**: Attack progression analysis
-- **Security alerts**: Suspicious identity activities
-
-#### Investigation Tools
-- **User investigation priority**: Risk-scored user list
-- **Entity pages**: Detailed user/device information
-- **Activity timeline**: Chronological event tracking
-
-## Reports and Analytics
-
-### Available Reports
-- **Security report**: Overall security posture
-- **Threat protection report**: Email security metrics
-- **Device compliance report**: Endpoint security status
-- **Identity security report**: Authentication insights
-
-### Custom Reporting
-- **Scheduled reports**: Automated report delivery
-- **Report customization**: Filter and customize views
-- **Data export**: CSV/Excel export capabilities
-
-## Best Practices for Portal Usage
-
-### Daily Tasks
-1. Review incident queue for new alerts
-2. Check Secure Score for new recommendations
-3. Monitor threat analytics for emerging threats
-4. Review automated investigation results
-
-### Weekly Tasks
-1. Analyze security reports and trends
-2. Review and tune security policies
-3. Conduct threat hunting exercises
-4. Update security awareness based on threats
-
-### Monthly Tasks
-1. Comprehensive security posture review
-2. Policy effectiveness assessment
-3. Security training needs analysis
-4. Incident response process review
-
-## Getting Started Checklist
-
-### Initial Setup
-- [ ] Verify portal access and permissions
-- [ ] Configure notification preferences
-- [ ] Set up automated investigation settings
-- [ ] Enable required security features
-
-### First Week Actions
-- [ ] Explore all main navigation sections
-- [ ] Review current Secure Score
-- [ ] Check for any critical incidents
-- [ ] Familiarize with threat analytics
-
-### Ongoing Management
-- [ ] Establish daily monitoring routine
-- [ ] Configure alert notifications
-- [ ] Set up regular reporting schedule
-- [ ] Plan security improvement initiatives
-
-## Common Navigation Tips
-- Use browser bookmarks for frequently accessed sections
-- Leverage search functionality for quick access
-- Customize dashboard widgets based on priorities
-- Use filters to focus on relevant information
-- Set up email notifications for critical alerts
-
-This guide provides the foundation for effectively navigating and utilizing the Microsoft 365 Security Portal. Regular exploration and hands-on experience will help you become proficient in managing your organization's security posture.
-    `,
+    content: "Step-by-step walkthrough of the portal layout, dashboard views, and key sections. Includes threat management, secure score, compliance alerts.\n\nPortal sections:\n- Home dashboard\n- Incidents & alerts\n- Threat analytics\n- Secure Score\n- Reports\n- Settings\n\nFamiliarize yourself with the portal layout and capabilities.",
+    excerpt: "Get oriented with the Microsoft 365 Security Portal layout, features, and navigation.",
     category: "security",
-    publishedDate: "2024-01-20",
-    readTime: 18,
-    viewCount: 2100,
-    tags: ["Security Portal", "Microsoft Defender", "Navigation", "Beginner"],
-    featured: true,
-    likes: 94,
-    dislikes: 1
+    tags: ["Security Portal", "Navigation", "Dashboard", "Getting Started"],
+    publishedDate: "2024-01-10",
+    readTime: 8,
+    viewCount: 934,
+    likes: 42,
+    dislikes: 1,
+    featured: true
+  },
+  {
+    id: "security-2",
+    title: "Understanding Microsoft Secure Score and How to Improve It",
+    content: "What Secure Score means, how it's calculated, and how to increase it. Includes actionable security tasks and tracking improvements.\n\nSecure Score components:\n- Current score\n- Comparison data\n- Improvement actions\n- Score history\n- Impact analysis\n\nPrioritize actions based on impact and difficulty.",
+    excerpt: "Understand and improve your Microsoft Secure Score with actionable security recommendations.",
+    category: "security",
+    tags: ["Secure Score", "Security Posture", "Improvements", "Recommendations"],
+    publishedDate: "2024-01-07",
+    readTime: 9,
+    viewCount: 756,
+    likes: 34,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "security-3",
+    title: "Setting Up Anti-Phishing Policies in Microsoft Defender",
+    content: "How to configure anti-phishing policies to protect users. Includes impersonation protection, spoofing protection, user impersonation alerts.\n\nAnti-phishing features:\n- User impersonation\n- Domain impersonation\n- Spoofing intelligence\n- Advanced settings\n- Policy assignment\n\nLayer multiple protection mechanisms for comprehensive defense.",
+    excerpt: "Configure anti-phishing policies in Microsoft Defender to protect against impersonation and spoofing attacks.",
+    category: "security",
+    tags: ["Anti-Phishing", "Microsoft Defender", "Email Security", "Protection"],
+    publishedDate: "2024-01-05",
+    readTime: 10,
+    viewCount: 623,
+    likes: 28,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "security-4",
+    title: "Creating and Managing Safe Links & Safe Attachments Policies",
+    content: "How to configure Microsoft Defender for Office 365 to scan links and attachments. Includes recommended policy settings for enterprise protection.\n\nSafe Links features:\n- URL scanning\n- Real-time protection\n- Click tracking\n- Custom blocked URLs\n\nSafe Attachments features:\n- File scanning\n- Dynamic Delivery\n- Quarantine settings\n\nImplement comprehensive email security policies.",
+    excerpt: "Configure Safe Links and Safe Attachments policies for comprehensive email security protection.",
+    category: "security",
+    tags: ["Safe Links", "Safe Attachments", "Email Security", "Defender"],
+    publishedDate: "2024-01-03",
+    readTime: 11,
+    viewCount: 567,
+    likes: 26,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "security-5",
+    title: "How to Investigate Threats Using Threat Explorer",
+    content: "Step-by-step guide to using Threat Explorer for email tracing and investigation. Includes real-time search, filtering, and investigation tips.\n\nThreat Explorer features:\n- Email investigation\n- Threat detection\n- Advanced filters\n- Timeline analysis\n- Remediation actions\n\nUse for proactive threat hunting and incident response.",
+    excerpt: "Master Threat Explorer for comprehensive email security investigation and threat hunting.",
+    category: "security",
+    tags: ["Threat Explorer", "Investigation", "Email Security", "Threat Hunting"],
+    publishedDate: "2024-01-01",
+    readTime: 12,
+    viewCount: 489,
+    likes: 22,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "security-6",
+    title: "Configuring Role-Based Access Control (RBAC) in Security Portal",
+    content: "How to assign security roles and scopes securely. Includes built-in vs custom roles, least-privilege best practices.\n\nSecurity roles:\n- Global roles\n- Security-specific roles\n- Custom roles\n- Role assignments\n- Scope limitations\n\nImplement least-privilege access principles.",
+    excerpt: "Configure secure role-based access control in the Security Portal with least-privilege principles.",
+    category: "security",
+    tags: ["RBAC", "Security Roles", "Access Control", "Least Privilege"],
+    publishedDate: "2023-12-29",
+    readTime: 9,
+    viewCount: 434,
+    likes: 20,
+    dislikes: 1,
+    featured: false
+  },
+  {
+    id: "security-7",
+    title: "Setting Up Alerts and Notifications for Threat Detection",
+    content: "How to create alert policies and automated notifications for threat events. Includes severity levels, policy triggers, and remediation steps.\n\nAlert types:\n- Email threats\n- Data breaches\n- Suspicious activities\n- Compliance violations\n- Custom alerts\n\nConfigure appropriate notification channels and escalation.",
+    excerpt: "Create comprehensive alert policies for proactive threat detection and incident response.",
+    category: "security",
+    tags: ["Alerts", "Notifications", "Threat Detection", "Incident Response"],
+    publishedDate: "2023-12-26",
+    readTime: 8,
+    viewCount: 578,
+    likes: 25,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "security-8",
+    title: "Investigating and Remediating Compromised Accounts",
+    content: "Signs of account compromise and how to respond. Includes audit logs, session revocation, MFA enforcement, and password reset.\n\nCompromise indicators:\n- Unusual sign-ins\n- Suspicious activities\n- Data exfiltration\n- Permission changes\n- Failed authentications\n\nFollow incident response procedures for containment.",
+    excerpt: "Identify and remediate compromised accounts with proper incident response procedures.",
+    category: "security",
+    tags: ["Account Compromise", "Incident Response", "Remediation", "Security"],
+    publishedDate: "2023-12-23",
+    readTime: 13,
+    viewCount: 645,
+    likes: 29,
+    dislikes: 2,
+    featured: false
+  },
+  {
+    id: "security-9",
+    title: "Running Attack Simulation Training in Microsoft Defender",
+    content: "Guide to launching phishing simulations and user security awareness training. Includes template selection, campaign setup, and tracking results.\n\nSimulation features:\n- Phishing templates\n- Landing pages\n- Training assignments\n- User reporting\n- Results analysis\n\nImprove security awareness through regular training.",
+    excerpt: "Deploy attack simulation training to improve user security awareness and phishing resistance.",
+    category: "security",
+    tags: ["Attack Simulation", "Training", "Phishing", "Security Awareness"],
+    publishedDate: "2023-12-20",
+    readTime: 10,
+    viewCount: 456,
+    likes: 21,
+    dislikes: 0,
+    featured: false
+  },
+  {
+    id: "security-10",
+    title: "Enabling Microsoft Defender for Endpoint Integration",
+    content: "How to connect Microsoft Defender for Endpoint with M365 Security Portal. Includes licensing, onboarding devices, and viewing alerts in the portal.\n\nIntegration benefits:\n- Unified dashboard\n- Cross-product correlation\n- Advanced analytics\n- Streamlined workflows\n- Comprehensive protection\n\nMaximize security with integrated endpoint protection.",
+    excerpt: "Integrate Microsoft Defender for Endpoint with the Security Portal for comprehensive protection.",
+    category: "security",
+    tags: ["Defender for Endpoint", "Integration", "Endpoint Protection", "Security"],
+    publishedDate: "2023-12-17",
+    readTime: 11,
+    viewCount: 523,
+    likes: 24,
+    dislikes: 1,
+    featured: false
   }
 ];
 
-// Get articles by category
-export const getArticlesByCategory = (categoryId: string): Article[] => {
-  return articles.filter(article => article.category === categoryId);
-};
-
-// Get featured articles
-export const getFeaturedArticles = (): Article[] => {
-  return articles.filter(article => article.featured);
-};
-
-// Get article by ID
+// Helper functions
 export const getArticleById = (id: string): Article | undefined => {
   return articles.find(article => article.id === id);
 };
 
-// Search articles
+export const getArticlesByCategory = (categoryId: string): Article[] => {
+  return articles.filter(article => article.category === categoryId);
+};
+
+export const getFeaturedArticles = (): Article[] => {
+  return articles.filter(article => article.featured);
+};
+
 export const searchArticles = (query: string, categoryId?: string): Article[] => {
-  const searchTerms = query.toLowerCase().split(' ');
-  let articlesToSearch = articles;
-  
-  if (categoryId) {
-    articlesToSearch = getArticlesByCategory(categoryId);
-  }
-  
-  return articlesToSearch.filter(article => {
-    const searchText = `${article.title} ${article.content} ${article.tags.join(' ')}`.toLowerCase();
-    return searchTerms.every(term => searchText.includes(term));
-  });
+  const searchQuery = query.toLowerCase();
+  let filteredArticles = categoryId 
+    ? articles.filter(article => article.category === categoryId)
+    : articles;
+
+  return filteredArticles.filter(article =>
+    article.title.toLowerCase().includes(searchQuery) ||
+    article.content.toLowerCase().includes(searchQuery) ||
+    article.tags.some(tag => tag.toLowerCase().includes(searchQuery))
+  );
 };

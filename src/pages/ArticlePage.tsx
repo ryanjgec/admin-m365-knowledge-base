@@ -1,10 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { CalendarDays, Clock, Eye, Heart, MessageCircle, Share2, ArrowLeft, ThumbsUp, ThumbsDown } from "lucide-react";
+import { CalendarDays, Clock, Eye, ThumbsUp, ThumbsDown, ArrowLeft, Share2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
@@ -63,7 +63,7 @@ const ArticlePage = () => {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Article Not Found</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Article Not Found</h1>
           <p className="text-gray-600 mb-8">The article you're looking for doesn't exist.</p>
           <Button asChild>
             <Link to="/">Back to Home</Link>
@@ -78,11 +78,11 @@ const ArticlePage = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <article className="py-8">
+      <article className="py-6 md:py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="mb-8">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <nav className="mb-6 md:mb-8">
+            <div className="flex flex-wrap items-center space-x-2 text-sm text-gray-600">
               <Link to="/" className="hover:text-ms-blue">Home</Link>
               <span>/</span>
               {category && (
@@ -93,12 +93,12 @@ const ArticlePage = () => {
                   <span>/</span>
                 </>
               )}
-              <span className="text-gray-900">{article.title}</span>
+              <span className="text-gray-900 break-words">{article.title}</span>
             </div>
           </nav>
 
           {/* Back Button */}
-          <Button variant="ghost" asChild className="mb-6">
+          <Button variant="ghost" asChild className="mb-4 md:mb-6 w-full md:w-auto">
             <Link to={category ? `/category/${category.id}` : "/"}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to {category ? category.name : "Home"}
@@ -106,8 +106,8 @@ const ArticlePage = () => {
           </Button>
 
           {/* Article Header */}
-          <header className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
+          <header className="mb-6 md:mb-8">
+            <div className="flex flex-wrap items-center gap-2 mb-4">
               {category && (
                 <Badge variant="secondary" className="bg-ms-blue-light text-ms-blue">
                   {category.name}
@@ -120,14 +120,15 @@ const ArticlePage = () => {
               )}
             </div>
             
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight">
               {article.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6">
+            <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-gray-600 mb-4 md:mb-6">
               <div className="flex items-center">
                 <CalendarDays className="w-4 h-4 mr-2" />
-                Published {new Date(article.publishedDate).toLocaleDateString('en-US', {
+                <span className="hidden md:inline">Published </span>
+                {new Date(article.publishedDate).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
@@ -144,7 +145,7 @@ const ArticlePage = () => {
             </div>
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="flex flex-wrap gap-2 mb-6 md:mb-8">
               {article.tags.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
                   {tag}
@@ -154,8 +155,8 @@ const ArticlePage = () => {
           </header>
 
           {/* Article Content */}
-          <div className="bg-white rounded-lg shadow-sm border p-8 mb-8">
-            <div className="prose prose-lg max-w-none">
+          <div className="bg-white rounded-lg shadow-sm border p-4 md:p-8 mb-6 md:mb-8">
+            <div className="prose prose-sm md:prose-lg max-w-none">
               <div 
                 dangerouslySetInnerHTML={{ 
                   __html: article.content.replace(/\n/g, '<br>').replace(/`([^`]+)`/g, '<code>$1</code>') 
@@ -165,9 +166,9 @@ const ArticlePage = () => {
           </div>
 
           {/* Article Actions */}
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+          <div className="bg-white rounded-lg shadow-sm border p-4 md:p-6 mb-6 md:mb-8">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                 <span className="text-gray-600 font-medium">Was this helpful?</span>
                 <div className="flex items-center space-x-2">
                   <Button
@@ -191,12 +192,12 @@ const ArticlePage = () => {
                 </div>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
+              <div className="flex items-center space-x-2 w-full lg:w-auto">
+                <Button variant="outline" size="sm" className="flex-1 lg:flex-none">
                   <Share2 className="w-4 h-4 mr-2" />
                   Share
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex-1 lg:flex-none">
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Comment
                 </Button>
@@ -204,8 +205,8 @@ const ArticlePage = () => {
             </div>
           </div>
 
-          {/* Comments Section (Placeholder) */}
-          <Card className="mb-8">
+          {/* Comments Section */}
+          <Card className="mb-6 md:mb-8">
             <CardHeader>
               <CardTitle>Comments</CardTitle>
               <CardDescription>
@@ -213,10 +214,10 @@ const ArticlePage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-6 md:py-8 text-gray-500">
                 <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                <p>No comments yet. Be the first to share your thoughts!</p>
-                <Button className="mt-4 bg-ms-blue hover:bg-ms-blue-dark">
+                <p className="mb-4">No comments yet. Be the first to share your thoughts!</p>
+                <Button className="bg-ms-blue hover:bg-ms-blue-dark w-full md:w-auto">
                   Sign In to Comment
                 </Button>
               </div>
@@ -226,8 +227,8 @@ const ArticlePage = () => {
           {/* Related Articles */}
           {relatedArticles.length > 0 && (
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Related Articles</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {relatedArticles.map((relatedArticle) => (
                   <ArticleCard key={relatedArticle.id} article={relatedArticle} />
                 ))}

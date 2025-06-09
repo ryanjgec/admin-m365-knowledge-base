@@ -1,8 +1,14 @@
 
-import { Search, User } from "lucide-react";
+import { User, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { categories } from "@/data/categories";
 
 const Header = () => {
   return (
@@ -22,9 +28,30 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/categories" className="text-gray-600 hover:text-ms-blue transition-colors">
-              Categories
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-gray-600 hover:text-ms-blue">
+                  Categories
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-64 bg-white shadow-lg border">
+                {categories.map((category) => (
+                  <DropdownMenuItem key={category.id} asChild>
+                    <Link 
+                      to={`/category/${category.id}`}
+                      className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50"
+                    >
+                      <span className="text-xl">{category.icon}</span>
+                      <div>
+                        <div className="font-medium text-gray-900">{category.name}</div>
+                        <div className="text-sm text-gray-500">{category.articleCount} articles</div>
+                      </div>
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Link to="/about" className="text-gray-600 hover:text-ms-blue transition-colors">
               About
             </Link>
@@ -33,16 +60,8 @@ const Header = () => {
             </Link>
           </nav>
 
-          {/* Search and User */}
+          {/* User */}
           <div className="flex items-center space-x-4">
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                type="text"
-                placeholder="Search articles..."
-                className="pl-10 w-64 bg-gray-50 border-gray-200"
-              />
-            </div>
             <Button variant="ghost" size="sm" className="text-gray-600">
               <User className="w-4 h-4 mr-2" />
               Sign In
