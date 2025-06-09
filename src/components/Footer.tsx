@@ -1,15 +1,13 @@
-
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import NewsletterForm from "@/components/NewsletterForm";
 import { Linkedin, Instagram } from "lucide-react";
-
 const Footer = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const currentYear = new Date().getFullYear();
-
-  return (
-    <footer className="bg-gray-900 text-white">
+  return <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info & Description */}
@@ -34,20 +32,10 @@ const Footer = () => {
             {/* Social Media */}
             <div className="flex items-center space-x-4 mt-6">
               <span className="text-gray-400 text-sm">Follow us:</span>
-              <a 
-                href="http://linkedin.com/company/microsoftadmin" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <a href="http://linkedin.com/company/microsoftadmin" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a 
-                href="https://www.instagram.com/microsoftadmin249/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
+              <a href="https://www.instagram.com/microsoftadmin249/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
             </div>
@@ -99,8 +87,7 @@ const Footer = () => {
                   Terms of Use
                 </Link>
               </li>
-              {user ? (
-                <>
+              {user ? <>
                   <li className="text-gray-400">
                     Signed in as: {user.email}
                   </li>
@@ -109,9 +96,7 @@ const Footer = () => {
                       Account Settings
                     </button>
                   </li>
-                </>
-              ) : (
-                <>
+                </> : <>
                   <li>
                     <Link to="/auth" className="text-gray-400 hover:text-white transition-colors">
                       Sign In
@@ -122,8 +107,7 @@ const Footer = () => {
                       Create Account
                     </Link>
                   </li>
-                </>
-              )}
+                </>}
               <li>
                 <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
                   Support
@@ -136,7 +120,7 @@ const Footer = () => {
         {/* Legal Disclaimer */}
         <div className="border-t border-gray-800 mt-8 pt-6">
           <div className="text-xs text-gray-400 leading-relaxed mb-4">
-            <strong>Legal Disclaimer:</strong> This website is an independent resource and is not affiliated with or endorsed by Microsoft Corporation. All trademarks are the property of their respective owners.
+            <strong>Disclaimer:</strong> This website is an independent resource and is not affiliated with or endorsed by Microsoft Corporation. All trademarks are the property of their respective owners.
           </div>
         </div>
 
@@ -157,8 +141,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
