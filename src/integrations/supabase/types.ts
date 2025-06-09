@@ -9,48 +9,171 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_audit_logs: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          resource_id: string | null
+          resource_type: string
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          resource_id?: string | null
+          resource_type: string
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          resource_id?: string | null
+          resource_type?: string
+        }
+        Relationships: []
+      }
+      article_comments: {
+        Row: {
+          article_id: string
+          content: string
+          created_at: string
+          id: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          content: string
+          created_at?: string
+          id?: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      article_likes: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      article_views: {
+        Row: {
+          article_id: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+          viewed_at: string
+        }
+        Insert: {
+          article_id: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          article_id?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          viewed_at?: string
+        }
+        Relationships: []
+      }
       articles: {
         Row: {
           author_id: string | null
           category: string
+          comment_count: number | null
           content: string
           created_at: string
           excerpt: string | null
           featured: boolean | null
           id: string
+          like_count: number | null
+          published_at: string | null
           read_time: string
+          scheduled_at: string | null
           status: string | null
           tags: string[] | null
           title: string
           updated_at: string
+          view_count: number | null
         }
         Insert: {
           author_id?: string | null
           category: string
+          comment_count?: number | null
           content: string
           created_at?: string
           excerpt?: string | null
           featured?: boolean | null
           id?: string
+          like_count?: number | null
+          published_at?: string | null
           read_time: string
+          scheduled_at?: string | null
           status?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
+          view_count?: number | null
         }
         Update: {
           author_id?: string | null
           category?: string
+          comment_count?: number | null
           content?: string
           created_at?: string
           excerpt?: string | null
           featured?: boolean | null
           id?: string
+          like_count?: number | null
+          published_at?: string | null
           read_time?: string
+          scheduled_at?: string | null
           status?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
+          view_count?: number | null
         }
         Relationships: []
       }
@@ -93,18 +216,21 @@ export type Database = {
           id: string
           is_active: boolean | null
           subscribed_at: string
+          unsubscribed_at: string | null
         }
         Insert: {
           email: string
           id?: string
           is_active?: boolean | null
           subscribed_at?: string
+          unsubscribed_at?: string | null
         }
         Update: {
           email?: string
           id?: string
           is_active?: boolean | null
           subscribed_at?: string
+          unsubscribed_at?: string | null
         }
         Relationships: []
       }
@@ -170,6 +296,13 @@ export type Database = {
       }
       is_admin: {
         Args: { user_id?: string }
+        Returns: boolean
+      }
+      update_user_role: {
+        Args: {
+          target_user_id: string
+          new_role: Database["public"]["Enums"]["app_role"]
+        }
         Returns: boolean
       }
     }

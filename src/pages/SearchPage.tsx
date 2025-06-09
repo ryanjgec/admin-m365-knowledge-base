@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { Search, Grid, List } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { searchArticles } from "@/data/articles";
 
 const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
@@ -26,7 +27,8 @@ const SearchPage = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      setSearchParams({ q: searchQuery });
+      // Prevent 404 by using navigate instead of directly setting search params
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -129,7 +131,7 @@ const SearchPage = () => {
                 <Button 
                   onClick={() => {
                     setSearchQuery("");
-                    setSearchParams({});
+                    navigate("/search");
                   }}
                   variant="outline"
                   className="w-full max-w-xs"

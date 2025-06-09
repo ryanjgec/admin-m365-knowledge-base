@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import NewsletterForm from "@/components/NewsletterForm";
 
 const Footer = () => {
   const { user } = useAuth();
@@ -21,6 +22,10 @@ const Footer = () => {
             <p className="text-gray-400 text-sm">
               Your trusted resource for Microsoft 365 administration guides, tips, and best practices.
             </p>
+            <div className="space-y-3">
+              <h4 className="font-medium text-white">Stay Updated</h4>
+              <NewsletterForm />
+            </div>
           </div>
 
           {/* Quick Links */}

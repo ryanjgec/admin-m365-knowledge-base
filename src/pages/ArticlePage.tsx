@@ -10,15 +10,20 @@ import Footer from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 import { getArticleById, articles } from "@/data/articles";
 import { categories } from "@/data/categories";
+import { useArticleViews } from "@/hooks/useArticleViews";
+import { useArticleLikes } from "@/hooks/useArticleLikes";
 
 const ArticlePage = () => {
   const { articleId } = useParams<{ articleId: string }>();
-  const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [userVote, setUserVote] = useState<'like' | 'dislike' | null>(null);
   
   const article = articleId ? getArticleById(articleId) : null;
   const category = article ? categories.find(cat => cat.id === article.category) : null;
+  
+  // Use the new hooks for tracking views and likes
+  useArticleViews(articleId || '');
+  const { userHasLiked, toggleLike, isLoading: likesLoading } = useArticleLikes(articleId || '');
   
   // Get related articles (same category, excluding current article)
   const relatedArticles = article 
@@ -27,34 +32,21 @@ const ArticlePage = () => {
 
   useEffect(() => {
     if (article) {
-      setLikes(article.likes);
       setDislikes(article.dislikes);
     }
   }, [article]);
 
-  const handleVote = (type: 'like' | 'dislike') => {
-    if (userVote === type) {
-      // Remove vote
-      if (type === 'like') {
-        setLikes(prev => prev - 1);
-      } else {
-        setDislikes(prev => prev - 1);
-      }
+  const handleDislike = () => {
+    if (userVote === 'dislike') {
+      setDislikes(prev => prev - 1);
       setUserVote(null);
     } else {
-      // Switch or add vote
       if (userVote === 'like') {
-        setLikes(prev => prev - 1);
-      } else if (userVote === 'dislike') {
-        setDislikes(prev => prev - 1);
+        // User is switching from like to dislike
+        setUserVote('dislike');
       }
-      
-      if (type === 'like') {
-        setLikes(prev => prev + 1);
-      } else {
-        setDislikes(prev => prev + 1);
-      }
-      setUserVote(type);
+      setDislikes(prev => prev + 1);
+      setUserVote('dislike');
     }
   };
 
@@ -172,18 +164,19 @@ const ArticlePage = () => {
                 <span className="text-gray-600 font-medium">Was this helpful?</span>
                 <div className="flex items-center space-x-2">
                   <Button
-                    variant={userVote === 'like' ? "default" : "outline"}
+                    variant={userHasLiked ? "default" : "outline"}
                     size="sm"
-                    onClick={() => handleVote('like')}
-                    className={userVote === 'like' ? "bg-green-500 hover:bg-green-600" : ""}
+                    onClick={toggleLike}
+                    disabled={likesLoading}
+                    className={userHasLiked ? "bg-green-500 hover:bg-green-600" : ""}
                   >
                     <ThumbsUp className="w-4 h-4 mr-2" />
-                    {likes}
+                    {article.likes + (userHasLiked ? 1 : 0)}
                   </Button>
                   <Button
                     variant={userVote === 'dislike' ? "default" : "outline"}
                     size="sm"
-                    onClick={() => handleVote('dislike')}
+                    onClick={handleDislike}
                     className={userVote === 'dislike' ? "bg-red-500 hover:bg-red-600" : ""}
                   >
                     <ThumbsDown className="w-4 h-4 mr-2" />

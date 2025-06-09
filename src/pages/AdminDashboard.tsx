@@ -5,7 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CategoryManager from '@/components/admin/CategoryManager';
 import ArticleManager from '@/components/admin/ArticleManager';
-import { Users, FileText, FolderOpen, BarChart3, LogOut, Shield } from 'lucide-react';
+import UserManager from '@/components/admin/UserManager';
+import NewsletterManager from '@/components/admin/NewsletterManager';
+import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
+import { Users, FileText, FolderOpen, BarChart3, LogOut, Shield, Mail } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { signOut, user } = useAuth();
@@ -103,17 +106,24 @@ const AdminDashboard = () => {
         {/* Management Tabs */}
         <Card>
           <CardHeader>
-            <CardTitle>Content Management</CardTitle>
+            <CardTitle>Admin Management</CardTitle>
             <CardDescription>
-              Manage categories and articles for your knowledge base
+              Comprehensive admin tools for content, users, and analytics
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="categories" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+            <Tabs defaultValue="analytics" className="w-full">
+              <TabsList className="grid w-full grid-cols-6">
+                <TabsTrigger value="analytics">Analytics</TabsTrigger>
                 <TabsTrigger value="categories">Categories</TabsTrigger>
                 <TabsTrigger value="articles">Articles</TabsTrigger>
+                <TabsTrigger value="users">Users</TabsTrigger>
+                <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="analytics" className="mt-6">
+                <AnalyticsDashboard />
+              </TabsContent>
               
               <TabsContent value="categories" className="mt-6">
                 <CategoryManager />
@@ -121,6 +131,14 @@ const AdminDashboard = () => {
               
               <TabsContent value="articles" className="mt-6">
                 <ArticleManager />
+              </TabsContent>
+              
+              <TabsContent value="users" className="mt-6">
+                <UserManager />
+              </TabsContent>
+              
+              <TabsContent value="newsletter" className="mt-6">
+                <NewsletterManager />
               </TabsContent>
             </Tabs>
           </CardContent>
