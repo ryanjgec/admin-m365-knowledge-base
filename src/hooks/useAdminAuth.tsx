@@ -19,36 +19,44 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
   const checkAdminStatus = async () => {
-    if (loading) return;
+    if (loading || !user) {
+      setIsAdminAuthenticated(false);
+      setIsCheckingAdmin(false);
+      return;
+    }
     
     console.log('AdminAuth: Starting admin check...', { user: user?.email, userId: user?.id });
     setIsCheckingAdmin(true);
     setAdminError(null);
 
-    if (!user) {
-      console.log('AdminAuth: No user found');
-      setIsAdminAuthenticated(false);
-      setIsCheckingAdmin(false);
-      return;
-    }
-
     try {
-      // Use the is_admin RPC function for a cleaner check
-      const { data: isAdmin, error: adminError } = await supabase
-        .rpc('is_admin', { user_id: user.id });
+      // First check if user_roles table has any records for this user
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
 
-      console.log('AdminAuth: Admin check result:', { isAdmin, adminError });
+      console.log('AdminAuth: User roles check:', { userRoles, rolesError });
 
-      if (adminError) {
-        console.error('AdminAuth: Error checking admin status:', adminError);
-        setAdminError(`Database error: ${adminError.message}`);
+      if (rolesError) {
+        console.error('AdminAuth: Error checking user roles:', rolesError);
+        setAdminError(`Database error: ${rolesError.message}`);
         setIsAdminAuthenticated(false);
-      } else {
-        setIsAdminAuthenticated(Boolean(isAdmin));
-        if (!isAdmin) {
-          setAdminError('Access denied: User does not have admin privileges');
-        }
+        setIsCheckingAdmin(false);
+        return;
       }
+
+      // Check if user has admin role
+      const hasAdminRole = userRoles?.some(role => role.role === 'admin');
+      
+      if (hasAdminRole) {
+        setIsAdminAuthenticated(true);
+        setAdminError(null);
+      } else {
+        setIsAdminAuthenticated(false);
+        setAdminError('Access denied: User does not have admin privileges');
+      }
+
     } catch (error) {
       console.error('AdminAuth: Unexpected error:', error);
       setAdminError(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -59,7 +67,9 @@ export const AdminAuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    checkAdminStatus();
+    if (!loading) {
+      checkAdminStatus();
+    }
   }, [user, loading]);
 
   const recheckAdmin = () => {

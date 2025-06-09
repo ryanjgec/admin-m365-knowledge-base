@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 const AdminSetup = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { recheckAdmin } = useAdminAuth();
 
   const makeUserAdmin = async (userEmail: string) => {
     if (!userEmail.trim()) {
@@ -50,24 +52,33 @@ const AdminSetup = () => {
       const targetUserId = profiles.id;
       console.log('Found user profile:', profiles);
 
-      // Use the RPC function to update the role
-      const { data, error: rpcError } = await supabase.rpc('update_user_role', {
-        target_user_id: targetUserId,
-        new_role: 'admin'
-      });
+      // Direct insert into user_roles table instead of using RPC
+      const { error: insertError } = await supabase
+        .from('user_roles')
+        .upsert({
+          user_id: targetUserId,
+          role: 'admin'
+        }, {
+          onConflict: 'user_id,role'
+        });
 
-      if (rpcError) {
-        console.error('RPC error:', rpcError);
-        throw new Error(`Failed to update role: ${rpcError.message}`);
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        throw new Error(`Failed to update role: ${insertError.message}`);
       }
 
-      console.log('Role updated successfully via RPC');
+      console.log('Role updated successfully');
       toast({
         title: "Success!",
         description: `${userEmail} is now an admin`,
       });
 
       setEmail('');
+      
+      // Recheck admin status after successful update
+      setTimeout(() => {
+        recheckAdmin();
+      }, 1000);
       
     } catch (error) {
       console.error('Error making user admin:', error);
@@ -143,7 +154,7 @@ const AdminSetup = () => {
           </Button>
 
           <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
-            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This tool uses the secure database functions.</p>
+            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This directly updates the user_roles table.</p>
           </div>
         </CardContent>
       </Card>
