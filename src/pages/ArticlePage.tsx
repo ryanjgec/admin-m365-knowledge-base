@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { CalendarDays, Clock, Eye, ThumbsUp, ThumbsDown, ArrowLeft, Share2, MessageCircle } from "lucide-react";
@@ -166,7 +165,7 @@ const ArticlePage = () => {
                   <Button
                     variant={userHasLiked ? "default" : "outline"}
                     size="sm"
-                    onClick={toggleLike}
+                    onClick={() => toggleLike()}
                     disabled={likesLoading}
                     className={userHasLiked ? "bg-green-500 hover:bg-green-600" : ""}
                   >
