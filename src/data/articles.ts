@@ -1,3 +1,4 @@
+
 export interface Article {
   id: string;
   title: string;
@@ -8,6 +9,7 @@ export interface Article {
   readTime: number;
   viewCount: number;
   likes: number;
+  dislikes: number;
   featured?: boolean;
 }
 
@@ -23,6 +25,7 @@ const outlookArticles: Article[] = [
     readTime: 8,
     viewCount: 2345,
     likes: 120,
+    dislikes: 8,
   },
   {
     id: "outlook-2",
@@ -34,6 +37,7 @@ const outlookArticles: Article[] = [
     readTime: 12,
     viewCount: 3456,
     likes: 150,
+    dislikes: 12,
   },
   {
     id: "outlook-3",
@@ -45,6 +49,7 @@ const outlookArticles: Article[] = [
     readTime: 10,
     viewCount: 1890,
     likes: 95,
+    dislikes: 5,
   },
   {
     id: "outlook-4",
@@ -56,6 +61,7 @@ const outlookArticles: Article[] = [
     readTime: 7,
     viewCount: 2100,
     likes: 110,
+    dislikes: 7,
   },
   {
     id: "outlook-5",
@@ -67,6 +73,7 @@ const outlookArticles: Article[] = [
     readTime: 9,
     viewCount: 2500,
     likes: 130,
+    dislikes: 9,
   },
   {
     id: "outlook-6",
@@ -78,6 +85,7 @@ const outlookArticles: Article[] = [
     readTime: 11,
     viewCount: 3000,
     likes: 140,
+    dislikes: 10,
   },
   {
     id: "outlook-7",
@@ -89,6 +97,7 @@ const outlookArticles: Article[] = [
     readTime: 8,
     viewCount: 2200,
     likes: 115,
+    dislikes: 6,
   },
   {
     id: "outlook-8",
@@ -100,6 +109,7 @@ const outlookArticles: Article[] = [
     readTime: 10,
     viewCount: 2800,
     likes: 135,
+    dislikes: 8,
   },
   {
     id: "outlook-9",
@@ -111,6 +121,7 @@ const outlookArticles: Article[] = [
     readTime: 7,
     viewCount: 2000,
     likes: 105,
+    dislikes: 4,
   },
   {
     id: "outlook-10",
@@ -122,6 +133,7 @@ const outlookArticles: Article[] = [
     readTime: 9,
     viewCount: 2400,
     likes: 125,
+    dislikes: 7,
   },
 ];
 
@@ -137,6 +149,7 @@ const teamsArticles: Article[] = [
     readTime: 11,
     viewCount: 3200,
     likes: 160,
+    dislikes: 12,
   },
   {
     id: "teams-2",
@@ -148,6 +161,7 @@ const teamsArticles: Article[] = [
     readTime: 9,
     viewCount: 2900,
     likes: 145,
+    dislikes: 10,
   },
   {
     id: "teams-3",
@@ -159,6 +173,7 @@ const teamsArticles: Article[] = [
     readTime: 10,
     viewCount: 2700,
     likes: 130,
+    dislikes: 8,
   },
   {
     id: "teams-4",
@@ -170,6 +185,7 @@ const teamsArticles: Article[] = [
     readTime: 8,
     viewCount: 2400,
     likes: 120,
+    dislikes: 6,
   },
   {
     id: "teams-5",
@@ -181,6 +197,7 @@ const teamsArticles: Article[] = [
     readTime: 12,
     viewCount: 3500,
     likes: 170,
+    dislikes: 15,
   },
   {
     id: "teams-6",
@@ -192,6 +209,7 @@ const teamsArticles: Article[] = [
     readTime: 11,
     viewCount: 3100,
     likes: 155,
+    dislikes: 11,
   },
   {
     id: "teams-7",
@@ -203,6 +221,7 @@ const teamsArticles: Article[] = [
     readTime: 9,
     viewCount: 2800,
     likes: 140,
+    dislikes: 9,
   },
   {
     id: "teams-8",
@@ -214,6 +233,7 @@ const teamsArticles: Article[] = [
     readTime: 10,
     viewCount: 2600,
     likes: 125,
+    dislikes: 7,
   },
   {
     id: "teams-9",
@@ -225,6 +245,7 @@ const teamsArticles: Article[] = [
     readTime: 8,
     viewCount: 2300,
     likes: 115,
+    dislikes: 5,
   },
   {
     id: "teams-10",
@@ -236,6 +257,7 @@ const teamsArticles: Article[] = [
     readTime: 12,
     viewCount: 3300,
     likes: 165,
+    dislikes: 13,
   },
 ];
 
@@ -251,6 +273,7 @@ const intuneArticles: Article[] = [
     readTime: 10,
     viewCount: 2800,
     likes: 140,
+    dislikes: 8,
   },
   {
     id: "intune-2",
@@ -262,6 +285,7 @@ const intuneArticles: Article[] = [
     readTime: 9,
     viewCount: 2500,
     likes: 125,
+    dislikes: 6,
   },
   {
     id: "intune-3",
@@ -273,6 +297,7 @@ const intuneArticles: Article[] = [
     readTime: 11,
     viewCount: 3000,
     likes: 150,
+    dislikes: 10,
   },
   {
     id: "intune-4",
@@ -284,6 +309,7 @@ const intuneArticles: Article[] = [
     readTime: 8,
     viewCount: 2200,
     likes: 110,
+    dislikes: 5,
   },
   {
     id: "intune-5",
@@ -295,6 +321,7 @@ const intuneArticles: Article[] = [
     readTime: 12,
     viewCount: 3300,
     likes: 165,
+    dislikes: 12,
   },
   {
     id: "intune-6",
@@ -306,6 +333,7 @@ const intuneArticles: Article[] = [
     readTime: 10,
     viewCount: 2900,
     likes: 145,
+    dislikes: 9,
   },
   {
     id: "intune-7",
@@ -317,6 +345,7 @@ const intuneArticles: Article[] = [
     readTime: 9,
     viewCount: 2600,
     likes: 130,
+    dislikes: 7,
   },
   {
     id: "intune-8",
@@ -328,6 +357,7 @@ const intuneArticles: Article[] = [
     readTime: 11,
     viewCount: 3100,
     likes: 155,
+    dislikes: 11,
   },
   {
     id: "intune-9",
@@ -339,6 +369,7 @@ const intuneArticles: Article[] = [
     readTime: 8,
     viewCount: 2300,
     likes: 115,
+    dislikes: 5,
   },
   {
     id: "intune-10",
@@ -350,6 +381,7 @@ const intuneArticles: Article[] = [
     readTime: 12,
     viewCount: 3400,
     likes: 170,
+    dislikes: 14,
   },
 ];
 
@@ -365,6 +397,7 @@ const azureAdArticles: Article[] = [
     readTime: 9,
     viewCount: 2600,
     likes: 130,
+    dislikes: 8,
   },
   {
     id: "azure-ad-2",
@@ -376,6 +409,7 @@ const azureAdArticles: Article[] = [
     readTime: 11,
     viewCount: 3100,
     likes: 155,
+    dislikes: 11,
   },
   {
     id: "azure-ad-3",
@@ -387,6 +421,7 @@ const azureAdArticles: Article[] = [
     readTime: 8,
     viewCount: 2300,
     likes: 115,
+    dislikes: 5,
   },
   {
     id: "azure-ad-4",
@@ -398,6 +433,7 @@ const azureAdArticles: Article[] = [
     readTime: 12,
     viewCount: 3400,
     likes: 170,
+    dislikes: 14,
   },
   {
     id: "azure-ad-5",
@@ -409,6 +445,7 @@ const azureAdArticles: Article[] = [
     readTime: 10,
     viewCount: 2900,
     likes: 145,
+    dislikes: 9,
   },
   {
     id: "azure-ad-6",
@@ -420,6 +457,7 @@ const azureAdArticles: Article[] = [
     readTime: 9,
     viewCount: 2600,
     likes: 130,
+    dislikes: 7,
   },
   {
     id: "azure-ad-7",
@@ -431,6 +469,7 @@ const azureAdArticles: Article[] = [
     readTime: 11,
     viewCount: 3200,
     likes: 160,
+    dislikes: 12,
   },
   {
     id: "azure-ad-8",
@@ -442,6 +481,7 @@ const azureAdArticles: Article[] = [
     readTime: 8,
     viewCount: 2400,
     likes: 120,
+    dislikes: 6,
   },
   {
     id: "azure-ad-9",
@@ -453,6 +493,7 @@ const azureAdArticles: Article[] = [
     readTime: 12,
     viewCount: 3500,
     likes: 175,
+    dislikes: 15,
   },
   {
     id: "azure-ad-10",
@@ -464,6 +505,7 @@ const azureAdArticles: Article[] = [
     readTime: 10,
     viewCount: 2800,
     likes: 140,
+    dislikes: 8,
   },
 ];
 
@@ -479,6 +521,7 @@ const sharepointArticles: Article[] = [
     readTime: 10,
     viewCount: 2700,
     likes: 135,
+    dislikes: 8,
   },
   {
     id: "sharepoint-2",
@@ -490,6 +533,7 @@ const sharepointArticles: Article[] = [
     readTime: 9,
     viewCount: 2400,
     likes: 120,
+    dislikes: 6,
   },
   {
     id: "sharepoint-3",
@@ -501,6 +545,7 @@ const sharepointArticles: Article[] = [
     readTime: 8,
     viewCount: 2100,
     likes: 105,
+    dislikes: 4,
   },
   {
     id: "sharepoint-4",
@@ -512,6 +557,7 @@ const sharepointArticles: Article[] = [
     readTime: 11,
     viewCount: 3000,
     likes: 150,
+    dislikes: 10,
   },
   {
     id: "sharepoint-5",
@@ -523,6 +569,7 @@ const sharepointArticles: Article[] = [
     readTime: 12,
     viewCount: 3300,
     likes: 165,
+    dislikes: 12,
   },
   {
     id: "sharepoint-6",
@@ -534,6 +581,7 @@ const sharepointArticles: Article[] = [
     readTime: 10,
     viewCount: 2800,
     likes: 140,
+    dislikes: 9,
   },
   {
     id: "sharepoint-7",
@@ -545,6 +593,7 @@ const sharepointArticles: Article[] = [
     readTime: 9,
     viewCount: 2500,
     likes: 125,
+    dislikes: 7,
   },
   {
     id: "sharepoint-8",
@@ -556,6 +605,7 @@ const sharepointArticles: Article[] = [
     readTime: 8,
     viewCount: 2200,
     likes: 110,
+    dislikes: 5,
   },
   {
     id: "sharepoint-9",
@@ -567,6 +617,7 @@ const sharepointArticles: Article[] = [
     readTime: 11,
     viewCount: 3100,
     likes: 155,
+    dislikes: 11,
   },
   {
     id: "sharepoint-10",
@@ -578,6 +629,7 @@ const sharepointArticles: Article[] = [
     readTime: 12,
     viewCount: 3400,
     likes: 170,
+    dislikes: 14,
   },
 ];
 
@@ -593,6 +645,7 @@ const securityArticles: Article[] = [
     readTime: 11,
     viewCount: 3000,
     likes: 150,
+    dislikes: 10,
     featured: true,
   },
   {
@@ -605,6 +658,7 @@ const securityArticles: Article[] = [
     readTime: 10,
     viewCount: 2700,
     likes: 135,
+    dislikes: 8,
   },
   {
     id: "security-3",
@@ -616,6 +670,7 @@ const securityArticles: Article[] = [
     readTime: 9,
     viewCount: 2400,
     likes: 120,
+    dislikes: 6,
   },
   {
     id: "security-4",
@@ -627,6 +682,7 @@ const securityArticles: Article[] = [
     readTime: 12,
     viewCount: 3300,
     likes: 165,
+    dislikes: 12,
     featured: true,
   },
   {
@@ -639,6 +695,7 @@ const securityArticles: Article[] = [
     readTime: 11,
     viewCount: 3000,
     likes: 150,
+    dislikes: 10,
   },
   {
     id: "security-6",
@@ -650,6 +707,7 @@ const securityArticles: Article[] = [
     readTime: 8,
     viewCount: 2200,
     likes: 110,
+    dislikes: 5,
   },
   {
     id: "security-7",
@@ -661,6 +719,7 @@ const securityArticles: Article[] = [
     readTime: 10,
     viewCount: 2800,
     likes: 140,
+    dislikes: 9,
   },
   {
     id: "security-8",
@@ -672,6 +731,7 @@ const securityArticles: Article[] = [
     readTime: 9,
     viewCount: 2500,
     likes: 125,
+    dislikes: 7,
   },
   {
     id: "security-9",
@@ -683,6 +743,7 @@ const securityArticles: Article[] = [
     readTime: 12,
     viewCount: 3400,
     likes: 170,
+    dislikes: 14,
     featured: true,
   },
   {
@@ -695,14 +756,9 @@ const securityArticles: Article[] = [
     readTime: 11,
     viewCount: 3100,
     likes: 155,
+    dislikes: 11,
   },
 ];
-
-export const articles = getAllArticles();
-
-export const getArticleById = (id: string): Article | undefined => {
-  return getAllArticles().find(article => article.id === id);
-};
 
 export const getAllArticles = (): Article[] => {
   return [
@@ -713,6 +769,12 @@ export const getAllArticles = (): Article[] => {
     ...sharepointArticles,
     ...securityArticles
   ];
+};
+
+export const articles = getAllArticles();
+
+export const getArticleById = (id: string): Article | undefined => {
+  return getAllArticles().find(article => article.id === id);
 };
 
 export const getFeaturedArticles = (): Article[] => {
