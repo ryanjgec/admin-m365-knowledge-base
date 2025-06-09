@@ -14,6 +14,11 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   const { user, loading: authLoading } = useAuth();
   const { isAdminAuthenticated, isCheckingAdmin, adminError } = useAdminAuth();
 
+  console.log('AdminRoute - User:', user?.email);
+  console.log('AdminRoute - IsAdminAuthenticated:', isAdminAuthenticated);
+  console.log('AdminRoute - IsCheckingAdmin:', isCheckingAdmin);
+  console.log('AdminRoute - AdminError:', adminError);
+
   if (authLoading || isCheckingAdmin) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
@@ -21,6 +26,9 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
           <CardContent className="pt-6">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
             <p className="text-gray-600">Verifying admin access...</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Checking credentials for: {user?.email || 'Unknown user'}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -42,7 +50,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
           </CardHeader>
           <CardContent>
             <Button 
-              onClick={() => window.location.href = '/'}
+              onClick={() => window.location.href = '/auth'}
               className="w-full"
             >
               Go to Login
@@ -62,14 +70,25 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
               <AlertTriangle className="w-8 h-8 text-red-600" />
             </div>
             <CardTitle className="text-2xl">Access Error</CardTitle>
-            <CardDescription>{adminError}</CardDescription>
+            <CardDescription>
+              {adminError}
+              <br />
+              <span className="text-sm">User: {user.email}</span>
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button 
               onClick={() => window.location.reload()}
-              className="w-full"
+              className="w-full mb-2"
             >
               Try Again
+            </Button>
+            <Button 
+              onClick={() => window.location.href = '/'}
+              className="w-full"
+              variant="outline"
+            >
+              Return to Home
             </Button>
           </CardContent>
         </Card>
@@ -88,6 +107,12 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
             <CardTitle className="text-2xl">Access Denied</CardTitle>
             <CardDescription>
               You do not have administrator privileges to access this area
+              <br />
+              <span className="text-sm">Signed in as: {user.email}</span>
+              <br />
+              <span className="text-xs text-gray-500">
+                If you should have admin access, please contact support.
+              </span>
             </CardDescription>
           </CardHeader>
           <CardContent>

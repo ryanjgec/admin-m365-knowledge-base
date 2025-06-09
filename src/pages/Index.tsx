@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, TrendingUp, BookOpen, Users } from "lucide-react";
+import { Search, BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,15 +25,6 @@ const Index = () => {
     "Your Trusted Knowledge Base..."
   ];
 
-  const popularSearches = [
-    "Exchange Online permissions",
-    "Teams policies", 
-    "Intune compliance",
-    "Azure AD MFA",
-    "SharePoint sharing",
-    "Security alerts"
-  ];
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -41,9 +32,8 @@ const Index = () => {
     }
   };
 
-  const handlePopularSearch = (search: string) => {
-    navigate(`/search?q=${encodeURIComponent(search)}`);
-  };
+  // Get total article count from all categories
+  const totalArticles = featuredArticles.length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,8 +42,8 @@ const Index = () => {
       {/* Hero Section with recommended animations */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative overflow-hidden">
         {/* Subtle background motion */}
-        <div className="absolute inset-0 bg-gradient-to-r from-ms-blue/20 to-transparent opacity-60 animate-pulse"></div>
-        <div className="absolute top-10 left-10 w-20 h-20 bg-ms-blue/10 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1B2A41]/20 to-transparent opacity-60 animate-pulse"></div>
+        <div className="absolute top-10 left-10 w-20 h-20 bg-[#1B2A41]/10 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse"></div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
@@ -80,54 +70,28 @@ const Index = () => {
               />
               <Button 
                 type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover:scale-105"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-[#1B2A41] hover:bg-[#152030] transition-all duration-200 hover:scale-105"
               >
                 Search
               </Button>
             </form>
           </div>
 
-          {/* Popular searches */}
-          <div className="flex flex-wrap justify-center gap-2 opacity-0 animate-fade-in-delayed-2">
-            <span className="text-slate-300 mr-2">Popular searches:</span>
-            {popularSearches.map((search, index) => (
-              <button
-                key={index}
-                className="text-slate-300 hover:text-white underline text-sm transition-colors duration-200"
-                onClick={() => handlePopularSearch(search)}
-              >
-                {search}
-                {index < popularSearches.length - 1 && <span className="ml-2">•</span>}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center opacity-0 animate-fade-in-delayed">
-              <div className="flex items-center justify-center w-16 h-16 bg-ms-blue-light rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
-                <BookOpen className="w-8 h-8 text-ms-blue" />
+          {/* Stats Section moved to hero */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto opacity-0 animate-fade-in-delayed-2">
+            <div className="text-center">
+              <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
+                <BookOpen className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-2">60+</h3>
-              <p className="text-gray-600">Expert Articles</p>
+              <h3 className="text-3xl font-bold text-white mb-2">{totalArticles}+</h3>
+              <p className="text-slate-300">Expert Articles</p>
             </div>
-            <div className="text-center opacity-0 animate-fade-in-delayed-2">
-              <div className="flex items-center justify-center w-16 h-16 bg-ms-blue-light rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
-                <Users className="w-8 h-8 text-ms-blue" />
+            <div className="text-center">
+              <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
+                <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-2">1000+</h3>
-              <p className="text-gray-600">Community Members</p>
-            </div>
-            <div className="text-center opacity-0 animate-fade-in-delayed-3">
-              <div className="flex items-center justify-center w-16 h-16 bg-ms-blue-light rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
-                <TrendingUp className="w-8 h-8 text-ms-blue" />
-              </div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-2">98%</h3>
-              <p className="text-gray-600">Solution Success Rate</p>
+              <h3 className="text-3xl font-bold text-white mb-2">1000+</h3>
+              <p className="text-slate-300">Community Members</p>
             </div>
           </div>
         </div>
@@ -176,7 +140,7 @@ const Index = () => {
           </div>
           
           <div className="text-center mt-12">
-            <Button asChild size="lg" className="bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover:scale-105">
+            <Button asChild size="lg" className="bg-[#1B2A41] hover:bg-[#152030] transition-all duration-200 hover:scale-105">
               <a href="/articles">View All Articles</a>
             </Button>
           </div>
@@ -184,7 +148,7 @@ const Index = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 bg-ms-blue-light">
+      <section className="py-16 bg-[#F2F4F7]">
         <div className="container mx-auto px-4">
           <Card className="max-w-2xl mx-auto transition-transform duration-200 hover:scale-[1.02]">
             <CardHeader className="text-center">
@@ -202,7 +166,7 @@ const Index = () => {
                   placeholder="Enter your email address"
                   className="flex-1 transition-all duration-200 hover:shadow-md focus:shadow-lg"
                 />
-                <Button type="submit" className="bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover:scale-105">
+                <Button type="submit" className="bg-[#1B2A41] hover:bg-[#152030] transition-all duration-200 hover:scale-105">
                   Subscribe
                 </Button>
               </form>

@@ -10,6 +10,7 @@ export const useNewsletter = () => {
 
   const subscribeMutation = useMutation({
     mutationFn: async (email: string) => {
+      // First, save to database
       const { data, error } = await supabase
         .from('newsletter_subscribers')
         .insert([{ email }])
@@ -17,12 +18,23 @@ export const useNewsletter = () => {
         .single();
       
       if (error) throw error;
+
+      // Then send confirmation email
+      const { error: emailError } = await supabase.functions.invoke('send-newsletter-email', {
+        body: { email }
+      });
+
+      if (emailError) {
+        console.error('Email sending error:', emailError);
+        // Don't throw error here - subscription is still valid even if email fails
+      }
+
       return data;
     },
     onSuccess: () => {
       toast({ 
         title: 'Successfully subscribed!', 
-        description: 'Thank you for subscribing to our newsletter.' 
+        description: 'Thank you for subscribing! Check your email for confirmation.' 
       });
       setEmail('');
       queryClient.invalidateQueries({ queryKey: ['newsletter-subscribers'] });

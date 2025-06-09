@@ -15,10 +15,10 @@ const Footer = () => {
           {/* Company Info & Description */}
           <div className="space-y-4 md:col-span-2">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-ms-blue rounded flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-8 h-8 bg-[#1B2A41] rounded flex items-center justify-center text-white font-bold text-sm">
                 M
               </div>
-              <span className="font-semibold text-xl">MicrosoftAdmin.in</span>
+              <span className="font-semibold text-xl">Microsoft Admin Knowledge Base</span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               Your trusted resource for Microsoft 365 administration tips, guides, and best practices. Stay ahead with expert insights and practical solutions.
@@ -64,7 +64,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/articles" className="text-gray-400 hover:text-white transition-colors">
-                  Categories
+                  Articles
                 </Link>
               </li>
               <li>
@@ -144,7 +144,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {currentYear} MicrosoftAdmin.in. All rights reserved.
+              © {currentYear} Microsoft Admin Knowledge Base. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to="/privacy" className="text-gray-400 hover:text-white text-sm transition-colors">
