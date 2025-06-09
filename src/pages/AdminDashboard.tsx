@@ -1,38 +1,50 @@
 
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import CategoryManager from '@/components/admin/CategoryManager';
 import ArticleManager from '@/components/admin/ArticleManager';
-import { Users, FileText, FolderOpen, BarChart3 } from 'lucide-react';
+import { Users, FileText, FolderOpen, BarChart3, LogOut } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { user, signOut } = useAuth();
+  const { logoutAdmin } = useAdminAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <header className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-ms-blue rounded flex items-center justify-center text-white font-bold text-sm">
+                M
+              </div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-gray-900">Admin Dashboard</span>
+                <span className="text-xs text-gray-500">Content Management</span>
+              </div>
+            </div>
+            <Button onClick={logoutAdmin} variant="outline" size="sm">
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </header>
       
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-600 mt-2">Welcome back, {user?.email}</p>
+              <p className="text-gray-600 mt-2">Welcome back, MSAdmin</p>
             </div>
-            <Button onClick={signOut} variant="outline">
-              Sign Out
-            </Button>
           </div>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="animate-fade-in hover-scale">
+          <Card className="transition-transform duration-200 hover:scale-105">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Articles</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
@@ -43,7 +55,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
           
-          <Card className="animate-fade-in hover-scale" style={{ animationDelay: '0.1s' }}>
+          <Card className="transition-transform duration-200 hover:scale-105">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Categories</CardTitle>
               <FolderOpen className="h-4 w-4 text-muted-foreground" />
@@ -54,7 +66,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
           
-          <Card className="animate-fade-in hover-scale" style={{ animationDelay: '0.2s' }}>
+          <Card className="transition-transform duration-200 hover:scale-105">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Users</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
@@ -65,7 +77,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
           
-          <Card className="animate-fade-in hover-scale" style={{ animationDelay: '0.3s' }}>
+          <Card className="transition-transform duration-200 hover:scale-105">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Views</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -78,7 +90,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Management Tabs */}
-        <Card className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <Card>
           <CardHeader>
             <CardTitle>Content Management</CardTitle>
             <CardDescription>
@@ -103,8 +115,6 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
-
-      <Footer />
     </div>
   );
 };

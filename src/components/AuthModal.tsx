@@ -97,18 +97,18 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md animate-scale-in">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold animate-fade-in">
+          <DialogTitle className="text-center text-2xl font-bold">
             Welcome to MicrosoftAdmin.in
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6 animate-fade-in">
+        <div className="space-y-6">
           <Button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover-scale"
+            className="w-full bg-red-600 hover:bg-red-700 text-white transition-all duration-200 hover:scale-[1.02]"
           >
             <Chrome className="w-4 h-4 mr-2" />
             Continue with Google
@@ -129,7 +129,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               <TabsTrigger value="signup" onClick={resetForm}>Sign Up</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="signin" className="space-y-4 animate-fade-in">
+            <TabsContent value="signin" className="space-y-4">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
@@ -165,7 +165,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover-scale" 
+                  className="w-full bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover:scale-[1.02]" 
                   disabled={loading}
                 >
                   {loading ? 'Signing in...' : 'Sign In'}
@@ -173,7 +173,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               </form>
             </TabsContent>
             
-            <TabsContent value="signup" className="space-y-4 animate-fade-in">
+            <TabsContent value="signup" className="space-y-4">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Full Name</Label>
@@ -226,7 +226,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover-scale" 
+                  className="w-full bg-ms-blue hover:bg-ms-blue-dark transition-all duration-200 hover:scale-[1.02]" 
                   disabled={loading}
                 >
                   {loading ? 'Creating account...' : 'Create Account'}
