@@ -4,7 +4,7 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Lock, Loader2 } from 'lucide-react';
+import { AlertTriangle, Lock, Loader2, RefreshCw } from 'lucide-react';
 
 interface AdminRouteProps {
   children: ReactNode;
@@ -14,10 +14,14 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   const { user, loading: authLoading } = useAuth();
   const { isAdminAuthenticated, isCheckingAdmin, adminError } = useAdminAuth();
 
-  console.log('AdminRoute - User:', user?.email);
-  console.log('AdminRoute - IsAdminAuthenticated:', isAdminAuthenticated);
-  console.log('AdminRoute - IsCheckingAdmin:', isCheckingAdmin);
-  console.log('AdminRoute - AdminError:', adminError);
+  console.log('AdminRoute Debug Info:', {
+    user: user?.email,
+    userId: user?.id,
+    isAdminAuthenticated,
+    isCheckingAdmin,
+    adminError,
+    authLoading
+  });
 
   if (authLoading || isCheckingAdmin) {
     return (
@@ -25,10 +29,15 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
         <Card className="w-full max-w-md text-center">
           <CardContent className="pt-6">
             <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-500" />
-            <p className="text-gray-600">Verifying admin access...</p>
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-gray-600 mb-2">Verifying admin access...</p>
+            <p className="text-sm text-gray-500">
               Checking credentials for: {user?.email || 'Unknown user'}
             </p>
+            {user?.id && (
+              <p className="text-xs text-gray-400 mt-1">
+                User ID: {user.id.slice(0, 8)}...
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -74,6 +83,8 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
               {adminError}
               <br />
               <span className="text-sm">User: {user.email}</span>
+              <br />
+              <span className="text-xs">ID: {user.id}</span>
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -81,7 +92,8 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
               onClick={() => window.location.reload()}
               className="w-full mb-2"
             >
-              Try Again
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Retry Check
             </Button>
             <Button 
               onClick={() => window.location.href = '/'}
@@ -109,6 +121,8 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
               You do not have administrator privileges to access this area
               <br />
               <span className="text-sm">Signed in as: {user.email}</span>
+              <br />
+              <span className="text-xs">User ID: {user.id}</span>
               <br />
               <span className="text-xs text-gray-500">
                 If you should have admin access, please contact support.

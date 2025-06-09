@@ -77,20 +77,20 @@ const Index = () => {
             </form>
           </div>
 
-          {/* Stats Section moved to hero */}
+          {/* Stats Section in hero */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto opacity-0 animate-fade-in-delayed-2">
             <div className="text-center">
               <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">{totalArticles}+</h3>
+              <h3 className="text-3xl font-bold text-white mb-2">60+</h3>
               <p className="text-slate-300">Expert Articles</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
                 <Users className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-white mb-2">1000+</h3>
+              <h3 className="text-3xl font-bold text-white mb-2">600+</h3>
               <p className="text-slate-300">Community Members</p>
             </div>
           </div>

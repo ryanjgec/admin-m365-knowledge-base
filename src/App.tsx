@@ -14,6 +14,7 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import SearchPage from "./pages/SearchPage";
 import AllArticlesPage from "./pages/AllArticlesPage";
+import NewsPage from "./pages/NewsPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminRoute from "./components/AdminRoute";
 import NotFound from "./pages/NotFound";
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/articles" element={<AllArticlesPage />} />
+              <Route path="/news" element={<NewsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/admin" element={

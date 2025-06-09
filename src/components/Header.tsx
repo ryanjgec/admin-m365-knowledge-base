@@ -1,116 +1,122 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X, Search, User, LogOut, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const location = useLocation();
   const { user, signOut } = useAuth();
-  const { isAdminAuthenticated } = useAdminAuth();
+
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
+    window.location.href = '/';
   };
 
-  const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Articles", href: "/articles" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-  ];
-
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-ms-blue rounded flex items-center justify-center text-white font-bold text-sm">
-                M
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-gray-900">MicrosoftAdmin.in</span>
-                <span className="text-xs text-gray-500">Knowledge Base</span>
-              </div>
-            </Link>
-          </div>
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-ms-blue rounded flex items-center justify-center text-white font-bold text-sm">
+              M
+            </div>
+            <span className="font-bold text-xl text-gray-900">
+              Microsoft Admin KB
+            </span>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="text-gray-600 hover:text-ms-blue transition-colors duration-200"
-              >
-                {item.name}
-              </Link>
-            ))}
+            <Link 
+              to="/" 
+              className={`text-gray-700 hover:text-ms-blue transition-colors ${
+                isActive('/') ? 'text-ms-blue font-medium border-b-2 border-ms-blue pb-1' : ''
+              }`}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/articles" 
+              className={`text-gray-700 hover:text-ms-blue transition-colors ${
+                isActive('/articles') ? 'text-ms-blue font-medium border-b-2 border-ms-blue pb-1' : ''
+              }`}
+            >
+              Articles
+            </Link>
+            <Link 
+              to="/news" 
+              className={`text-gray-700 hover:text-ms-blue transition-colors ${
+                isActive('/news') ? 'text-ms-blue font-medium border-b-2 border-ms-blue pb-1' : ''
+              }`}
+            >
+              News
+            </Link>
+            <Link 
+              to="/about" 
+              className={`text-gray-700 hover:text-ms-blue transition-colors ${
+                isActive('/about') ? 'text-ms-blue font-medium border-b-2 border-ms-blue pb-1' : ''
+              }`}
+            >
+              About
+            </Link>
+            <Link 
+              to="/contact" 
+              className={`text-gray-700 hover:text-ms-blue transition-colors ${
+                isActive('/contact') ? 'text-ms-blue font-medium border-b-2 border-ms-blue pb-1' : ''
+              }`}
+            >
+              Contact
+            </Link>
           </nav>
 
-          {/* Desktop Auth Section */}
+          {/* Search and Auth */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/search">
-                <Search className="w-4 h-4" />
-              </Link>
-            </Button>
-
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-64 border-gray-300 focus:border-ms-blue focus:ring-ms-blue"
+              />
+            </form>
+            
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="w-4 h-4" />
-                    <span className="max-w-32 truncate">{user.email}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem asChild>
-                    <div className="flex flex-col items-start">
-                      <span className="font-medium">{user.email}</span>
-                      {isAdminAuthenticated && (
-                        <span className="text-xs text-blue-600 font-medium">Administrator</span>
-                      )}
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  {isAdminAuthenticated && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="flex items-center">
-                          <Shield className="w-4 h-4 mr-2" />
-                          Admin Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/auth">Sign In</Link>
-                </Button>
-                <Button size="sm" asChild className="bg-ms-blue hover:bg-ms-blue-dark">
-                  <Link to="/auth?mode=signup">Sign Up</Link>
+                <span className="text-sm text-gray-600">
+                  Welcome, {user.email}
+                </span>
+                {user.userRole === 'admin' && (
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/admin">Admin</Link>
+                  </Button>
+                )}
+                <Button onClick={handleSignOut} variant="outline" size="sm">
+                  Sign Out
                 </Button>
               </div>
+            ) : (
+              <Button asChild>
+                <Link to="/auth">Sign In</Link>
+              </Button>
             )}
           </div>
 
@@ -120,8 +126,9 @@ const Header = () => {
               variant="ghost"
               size="sm"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2"
             >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
@@ -129,68 +136,88 @@ const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
-            <div className="flex flex-col space-y-3">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className="text-gray-600 hover:text-ms-blue transition-colors duration-200 px-2 py-1"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+            <nav className="flex flex-col space-y-4">
+              <Link 
+                to="/" 
+                className={`text-gray-700 hover:text-ms-blue transition-colors py-2 ${
+                  isActive('/') ? 'text-ms-blue font-medium' : ''
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/articles" 
+                className={`text-gray-700 hover:text-ms-blue transition-colors py-2 ${
+                  isActive('/articles') ? 'text-ms-blue font-medium' : ''
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Articles
+              </Link>
+              <Link 
+                to="/news" 
+                className={`text-gray-700 hover:text-ms-blue transition-colors py-2 ${
+                  isActive('/news') ? 'text-ms-blue font-medium' : ''
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                News
+              </Link>
+              <Link 
+                to="/about" 
+                className={`text-gray-700 hover:text-ms-blue transition-colors py-2 ${
+                  isActive('/about') ? 'text-ms-blue font-medium' : ''
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link 
+                to="/contact" 
+                className={`text-gray-700 hover:text-ms-blue transition-colors py-2 ${
+                  isActive('/contact') ? 'text-ms-blue font-medium' : ''
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
               
-              <div className="border-t border-gray-200 pt-3 mt-3">
+              {/* Mobile Search */}
+              <form onSubmit={handleSearch} className="relative pt-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 w-full border-gray-300 focus:border-ms-blue focus:ring-ms-blue"
+                />
+              </form>
+              
+              {/* Mobile Auth */}
+              <div className="pt-4 border-t border-gray-200">
                 {user ? (
                   <div className="space-y-2">
-                    <div className="px-2 py-1">
-                      <span className="text-sm font-medium text-gray-900">{user.email}</span>
-                      {isAdminAuthenticated && (
-                        <div className="text-xs text-blue-600 font-medium">Administrator</div>
-                      )}
-                    </div>
-                    {isAdminAuthenticated && (
-                      <Link
-                        to="/admin"
-                        className="flex items-center text-gray-600 hover:text-ms-blue transition-colors duration-200 px-2 py-1"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Shield className="w-4 h-4 mr-2" />
-                        Admin Dashboard
-                      </Link>
+                    <p className="text-sm text-gray-600">
+                      Welcome, {user.email}
+                    </p>
+                    {user.userRole === 'admin' && (
+                      <Button asChild variant="outline" size="sm" className="w-full">
+                        <Link to="/admin" onClick={() => setIsMenuOpen(false)}>Admin Dashboard</Link>
+                      </Button>
                     )}
-                    <button
-                      onClick={() => {
-                        handleSignOut();
-                        setIsMenuOpen(false);
-                      }}
-                      className="flex items-center text-red-600 hover:text-red-700 transition-colors duration-200 px-2 py-1 w-full text-left"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
+                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full">
                       Sign Out
-                    </button>
+                    </Button>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <Link
-                      to="/auth"
-                      className="block text-gray-600 hover:text-ms-blue transition-colors duration-200 px-2 py-1"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      to="/auth?mode=signup"
-                      className="block bg-ms-blue text-white hover:bg-ms-blue-dark transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium mx-2"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
-                  </div>
+                  <Button asChild className="w-full">
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+                  </Button>
                 )}
               </div>
-            </div>
+            </nav>
           </div>
         )}
       </div>
