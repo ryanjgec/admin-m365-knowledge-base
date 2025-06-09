@@ -5,78 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-
-interface AuthUser {
-  id: string;
-  email?: string;
-  [key: string]: any;
-}
-
-interface UserWithRole extends AuthUser {
-  role: string;
-}
+import { useAuth } from '@/hooks/useAuth';
 
 const AdminSetup = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUsers, setCurrentUsers] = useState<UserWithRole[]>([]);
-  const [showUsers, setShowUsers] = useState(false);
   const { toast } = useToast();
-
-  const checkCurrentUsers = async () => {
-    setIsLoading(true);
-    try {
-      // Get all users
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-      
-      if (authError) {
-        console.error('Error fetching auth users:', authError);
-        toast({
-          title: "Error",
-          description: "Failed to fetch users: " + authError.message,
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Get user roles
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('*');
-
-      if (rolesError) {
-        console.error('Error fetching roles:', rolesError);
-      }
-
-      console.log('Auth users:', authUsers);
-      console.log('User roles:', roles);
-
-      const usersWithRoles: UserWithRole[] = authUsers.users.map((user: AuthUser) => {
-        const userRole = roles?.find(role => role.user_id === user.id);
-        return {
-          ...user,
-          role: userRole?.role || 'none'
-        };
-      });
-
-      setCurrentUsers(usersWithRoles);
-      setShowUsers(true);
-      
-      toast({
-        title: "Users fetched",
-        description: `Found ${usersWithRoles.length} users`,
-      });
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      toast({
-        title: "Error",
-        description: "Unexpected error occurred",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { user } = useAuth();
 
   const makeUserAdmin = async (userEmail: string) => {
     if (!userEmail.trim()) {
@@ -90,31 +25,36 @@ const AdminSetup = () => {
 
     setIsLoading(true);
     try {
-      // First, find the user by email
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-      
-      if (authError) {
-        throw new Error(`Failed to fetch users: ${authError.message}`);
+      console.log('Making user admin:', userEmail);
+
+      // Since we can't use admin API, we'll work with the user_roles table directly
+      // First check if this email exists in our profiles table
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .eq('email', userEmail);
+
+      if (profileError) {
+        throw new Error(`Failed to find user profile: ${profileError.message}`);
       }
 
-      const targetUser = authUsers.users.find((user: AuthUser) => user.email === userEmail);
-      
-      if (!targetUser) {
+      if (!profiles || profiles.length === 0) {
         toast({
           title: "Error",
-          description: `No user found with email: ${userEmail}`,
+          description: `No user found with email: ${userEmail}. The user must sign up first.`,
           variant: "destructive",
         });
         return;
       }
 
-      console.log('Found user:', targetUser);
+      const targetUserId = profiles[0].id;
+      console.log('Found user profile:', profiles[0]);
 
       // Check if user already has a role
       const { data: existingRole, error: roleCheckError } = await supabase
         .from('user_roles')
         .select('*')
-        .eq('user_id', targetUser.id)
+        .eq('user_id', targetUserId)
         .single();
 
       if (roleCheckError && roleCheckError.code !== 'PGRST116') { // PGRST116 = no rows returned
@@ -126,7 +66,7 @@ const AdminSetup = () => {
         const { error: updateError } = await supabase
           .from('user_roles')
           .update({ role: 'admin' })
-          .eq('user_id', targetUser.id);
+          .eq('user_id', targetUserId);
 
         if (updateError) {
           throw new Error(`Failed to update role: ${updateError.message}`);
@@ -140,7 +80,7 @@ const AdminSetup = () => {
         // Insert new role
         const { error: insertError } = await supabase
           .from('user_roles')
-          .insert({ user_id: targetUser.id, role: 'admin' });
+          .insert({ user_id: targetUserId, role: 'admin' });
 
         if (insertError) {
           throw new Error(`Failed to create admin role: ${insertError.message}`);
@@ -166,6 +106,19 @@ const AdminSetup = () => {
     }
   };
 
+  const makeSelfAdmin = async () => {
+    if (!user?.email) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to make yourself admin",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await makeUserAdmin(user.email);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       <Card>
@@ -176,6 +129,22 @@ const AdminSetup = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {user && (
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800 mb-2">
+                <strong>Current user:</strong> {user.email}
+              </p>
+              <Button 
+                onClick={makeSelfAdmin}
+                disabled={isLoading}
+                className="w-full"
+                variant="outline"
+              >
+                {isLoading ? 'Processing...' : 'Make Myself Admin'}
+              </Button>
+            </div>
+          )}
+
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
               User Email Address
@@ -194,50 +163,12 @@ const AdminSetup = () => {
             disabled={isLoading || !email.trim()}
             className="w-full"
           >
-            {isLoading ? 'Processing...' : 'Make Admin'}
+            {isLoading ? 'Processing...' : 'Make User Admin'}
           </Button>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Debug Tools</CardTitle>
-          <CardDescription>
-            View current users and their roles
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button 
-            onClick={checkCurrentUsers}
-            disabled={isLoading}
-            variant="outline"
-            className="w-full"
-          >
-            {isLoading ? 'Loading...' : 'Show All Users & Roles'}
-          </Button>
-          
-          {showUsers && (
-            <div className="mt-4 space-y-2">
-              <h4 className="font-medium">Current Users:</h4>
-              {currentUsers.map((user) => (
-                <div key={user.id} className="p-2 bg-gray-50 rounded text-sm">
-                  <div><strong>Email:</strong> {user.email || 'No email'}</div>
-                  <div><strong>Role:</strong> {user.role}</div>
-                  <div><strong>ID:</strong> {user.id}</div>
-                  {user.role !== 'admin' && user.email && (
-                    <Button
-                      size="sm"
-                      className="mt-2"
-                      onClick={() => makeUserAdmin(user.email!)}
-                      disabled={isLoading}
-                    >
-                      Make Admin
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
+            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This tool works with the profiles table instead of requiring admin API access.</p>
+          </div>
         </CardContent>
       </Card>
     </div>
