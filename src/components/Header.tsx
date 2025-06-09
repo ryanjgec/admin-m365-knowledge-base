@@ -10,7 +10,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, userRole, signOut } = useAuth();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -104,7 +104,7 @@ const Header = () => {
                 <span className="text-sm text-gray-600">
                   Welcome, {user.email}
                 </span>
-                {user.userRole === 'admin' && (
+                {userRole === 'admin' && (
                   <Button asChild variant="outline" size="sm">
                     <Link to="/admin">Admin</Link>
                   </Button>
@@ -202,7 +202,7 @@ const Header = () => {
                     <p className="text-sm text-gray-600">
                       Welcome, {user.email}
                     </p>
-                    {user.userRole === 'admin' && (
+                    {userRole === 'admin' && (
                       <Button asChild variant="outline" size="sm" className="w-full">
                         <Link to="/admin" onClick={() => setIsMenuOpen(false)}>Admin Dashboard</Link>
                       </Button>
