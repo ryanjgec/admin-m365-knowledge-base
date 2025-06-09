@@ -698,6 +698,12 @@ const securityArticles: Article[] = [
   },
 ];
 
+export const articles = getAllArticles();
+
+export const getArticleById = (id: string): Article | undefined => {
+  return getAllArticles().find(article => article.id === id);
+};
+
 export const getAllArticles = (): Article[] => {
   return [
     ...outlookArticles,
