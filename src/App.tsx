@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { AdminAuthProvider } from "@/hooks/useAdminAuth";
+import DatabaseInit from "@/components/DatabaseInit";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import CategoryPage from "./pages/CategoryPage";
@@ -24,6 +25,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <AdminAuthProvider>
+        <DatabaseInit />
         <TooltipProvider>
           <Toaster />
           <Sonner />

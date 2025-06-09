@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserRole = async (userId: string) => {
     try {
+      console.log('Fetching user role for:', userId);
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
@@ -32,29 +33,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (error) {
         console.error('Error fetching user role:', error);
-        return null;
+        return 'user'; // Default to user role if fetch fails
       }
       
-      return data?.role || null;
+      console.log('User role fetched:', data?.role);
+      return data?.role || 'user';
     } catch (error) {
       console.error('Error in fetchUserRole:', error);
-      return null;
+      return 'user';
     }
   };
 
   useEffect(() => {
+    console.log('Setting up auth state listener');
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
           // Fetch user role after setting user
-          setTimeout(async () => {
-            const role = await fetchUserRole(session.user.id);
-            setUserRole(role);
-          }, 0);
+          const role = await fetchUserRole(session.user.id);
+          setUserRole(role);
         } else {
           setUserRole(null);
         }
@@ -64,15 +67,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        setTimeout(async () => {
-          const role = await fetchUserRole(session.user.id);
-          setUserRole(role);
-        }, 0);
+        const role = await fetchUserRole(session.user.id);
+        setUserRole(role);
       }
       
       setLoading(false);
@@ -82,6 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
+    console.log('Attempting sign up for:', email);
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -95,19 +98,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     
+    if (error) {
+      console.error('Sign up error:', error);
+    } else {
+      console.log('Sign up successful for:', email);
+    }
+    
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('Attempting sign in for:', email);
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     
+    if (error) {
+      console.error('Sign in error:', error);
+    } else {
+      console.log('Sign in successful for:', email);
+    }
+    
     return { error };
   };
 
   const signInWithGoogle = async () => {
+    console.log('Attempting Google sign in');
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signInWithOAuth({
@@ -117,10 +135,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
     
+    if (error) {
+      console.error('Google sign in error:', error);
+    }
+    
     return { error };
   };
 
   const signOut = async () => {
+    console.log('Signing out');
     await supabase.auth.signOut();
   };
 
