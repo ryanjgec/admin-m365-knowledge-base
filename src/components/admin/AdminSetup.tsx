@@ -6,10 +6,20 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
+interface AuthUser {
+  id: string;
+  email?: string;
+  [key: string]: any;
+}
+
+interface UserWithRole extends AuthUser {
+  role: string;
+}
+
 const AdminSetup = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUsers, setCurrentUsers] = useState<any[]>([]);
+  const [currentUsers, setCurrentUsers] = useState<UserWithRole[]>([]);
   const [showUsers, setShowUsers] = useState(false);
   const { toast } = useToast();
 
@@ -41,7 +51,7 @@ const AdminSetup = () => {
       console.log('Auth users:', authUsers);
       console.log('User roles:', roles);
 
-      const usersWithRoles = authUsers.users.map(user => {
+      const usersWithRoles: UserWithRole[] = authUsers.users.map((user: AuthUser) => {
         const userRole = roles?.find(role => role.user_id === user.id);
         return {
           ...user,
@@ -87,7 +97,7 @@ const AdminSetup = () => {
         throw new Error(`Failed to fetch users: ${authError.message}`);
       }
 
-      const targetUser = authUsers.users.find(user => user.email === userEmail);
+      const targetUser = authUsers.users.find((user: AuthUser) => user.email === userEmail);
       
       if (!targetUser) {
         toast({
@@ -209,16 +219,16 @@ const AdminSetup = () => {
           {showUsers && (
             <div className="mt-4 space-y-2">
               <h4 className="font-medium">Current Users:</h4>
-              {currentUsers.map((user, index) => (
+              {currentUsers.map((user) => (
                 <div key={user.id} className="p-2 bg-gray-50 rounded text-sm">
-                  <div><strong>Email:</strong> {user.email}</div>
+                  <div><strong>Email:</strong> {user.email || 'No email'}</div>
                   <div><strong>Role:</strong> {user.role}</div>
                   <div><strong>ID:</strong> {user.id}</div>
-                  {user.role !== 'admin' && (
+                  {user.role !== 'admin' && user.email && (
                     <Button
                       size="sm"
                       className="mt-2"
-                      onClick={() => makeUserAdmin(user.email)}
+                      onClick={() => makeUserAdmin(user.email!)}
                       disabled={isLoading}
                     >
                       Make Admin
