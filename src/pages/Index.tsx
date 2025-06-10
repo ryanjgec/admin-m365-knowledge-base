@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, Users, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,16 +7,32 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CategoryCard from "@/components/CategoryCard";
-import ArticleCard from "@/components/ArticleCard";
-import TypingEffect from "@/components/TypingEffect";
 import HideLovableBadge from "@/components/HideLovableBadge";
-import { categories } from "@/data/categories";
-import { getFeaturedArticles } from "@/data/articles";
+import { CategoryCardSkeleton, ArticleCardSkeleton, HeroSkeleton } from "@/components/LoadingSkeleton";
+
+// Lazy load components for better performance
+const CategoryCard = lazy(() => import("@/components/CategoryCard"));
+const ArticleCard = lazy(() => import("@/components/ArticleCard"));
+const TypingEffect = lazy(() => import("@/components/TypingEffect"));
+
+// Lazy load data to reduce initial bundle size
+const loadCategories = () => import("@/data/categories").then(module => module.categories);
+const loadFeaturedArticles = () => import("@/data/articles").then(module => module.getFeaturedArticles());
 
 const Index = () => {
   const navigate = useNavigate();
-  const featuredArticles = getFeaturedArticles();
+  const [categories, setCategories] = useState<any[]>([]);
+  const [featuredArticles, setFeaturedArticles] = useState<any[]>([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // Load data on component mount
+  useState(() => {
+    Promise.all([loadCategories(), loadFeaturedArticles()]).then(([cats, articles]) => {
+      setCategories(cats);
+      setFeaturedArticles(articles);
+      setDataLoaded(true);
+    });
+  });
 
   const typingPhrases = [
     "Your Microsoft 365 Admin Companion...",
@@ -28,8 +44,8 @@ const Index = () => {
   // Get total article count from all categories
   const totalArticles = categories.reduce((sum, category) => sum + category.articleCount, 0);
 
-  // Add structured data for articles
-  const articleStructuredData = {
+  // Add structured data for articles (only when loaded)
+  const articleStructuredData = dataLoaded ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "itemListElement": featuredArticles.map((article, index) => ({
@@ -45,56 +61,58 @@ const Index = () => {
       "datePublished": article.publishedDate,
       "keywords": article.tags.join(", ")
     }))
-  };
+  } : null;
 
   return (
     <>
       {/* SEO JSON-LD for articles */}
-      <script 
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleStructuredData) }}
-      />
+      {articleStructuredData && (
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleStructuredData) }}
+        />
+      )}
       
       <div className="min-h-screen bg-gray-50">
         <HideLovableBadge />
         <Header />
         
-        {/* Hero Section with recommended animations */}
+        {/* Hero Section with optimized animations */}
         <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-20 relative overflow-hidden">
-          {/* Subtle background motion */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1B2A41]/20 to-transparent opacity-60 animate-pulse"></div>
-          <div className="absolute top-10 left-10 w-20 h-20 bg-[#1B2A41]/10 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-32 h-32 bg-purple-500/10 rounded-full blur-xl animate-pulse"></div>
+          {/* Reduced background animations for performance */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1B2A41]/20 to-transparent opacity-60"></div>
           
           <div className="container mx-auto px-4 text-center relative z-10">
-            {/* Fade-in on load - Title with SEO-optimized heading */}
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 opacity-0 animate-fade-in">
+            {/* Optimized title with reduced animation */}
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-in fade-in duration-1000">
               Microsoft 365 Admin Knowledge Base
             </h1>
             
-            {/* SEO-optimized subtitle */}
-            <h2 className="text-xl md:text-2xl mb-8 text-slate-200 max-w-3xl mx-auto h-16 flex items-center justify-center opacity-0 animate-fade-in-delayed">
-              <TypingEffect phrases={typingPhrases} />
+            {/* Lazy loaded typing effect */}
+            <h2 className="text-xl md:text-2xl mb-8 text-slate-200 max-w-3xl mx-auto h-16 flex items-center justify-center">
+              <Suspense fallback={<span>Your Microsoft 365 Admin Companion...</span>}>
+                <TypingEffect phrases={typingPhrases} />
+              </Suspense>
             </h2>
 
-            {/* Stats Section in hero with semantic markup */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto opacity-0 animate-fade-in-delayed-2">
+            {/* Stats Section with conditional rendering */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div className="text-center" itemScope itemType="https://schema.org/Statistic">
-                <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
+                <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4">
                   <BookOpen className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-3xl font-bold text-white mb-2" itemProp="value">{totalArticles}+</h3>
+                <h3 className="text-3xl font-bold text-white mb-2" itemProp="value">{totalArticles || 60}+</h3>
                 <p className="text-slate-300" itemProp="name">Expert Articles</p>
               </div>
               <div className="text-center" itemScope itemType="https://schema.org/Statistic">
-                <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
+                <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-2" itemProp="value">800+</h3>
                 <p className="text-slate-300" itemProp="name">Community Members</p>
               </div>
               <div className="text-center" itemScope itemType="https://schema.org/Statistic">
-                <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4 transition-transform duration-200 hover:scale-110">
+                <div className="flex items-center justify-center w-16 h-16 bg-[#1B2A41]/20 rounded-full mx-auto mb-4">
                   <Award className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-3xl font-bold text-white mb-2" itemProp="value">50+</h3>
@@ -104,7 +122,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Categories Section with semantic markup */}
+        {/* Categories Section with lazy loading */}
         <section className="py-16 bg-gray-50" itemScope itemType="https://schema.org/WebPageElement">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -117,17 +135,26 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" itemScope itemType="https://schema.org/ItemList">
-              {categories.map((category, index) => (
-                <div key={category.id} itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                  <meta itemProp="position" content={String(index + 1)} />
-                  <CategoryCard category={category} />
-                </div>
-              ))}
+              {dataLoaded ? (
+                categories.map((category, index) => (
+                  <div key={category.id} itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                    <meta itemProp="position" content={String(index + 1)} />
+                    <Suspense fallback={<CategoryCardSkeleton />}>
+                      <CategoryCard category={category} />
+                    </Suspense>
+                  </div>
+                ))
+              ) : (
+                // Show loading skeletons while data loads
+                Array.from({ length: 9 }).map((_, index) => (
+                  <CategoryCardSkeleton key={index} />
+                ))
+              )}
             </div>
           </div>
         </section>
 
-        {/* Featured Articles Section with better SEO */}
+        {/* Featured Articles Section with lazy loading */}
         <section className="py-16 bg-white" itemScope itemType="https://schema.org/WebPageElement">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
@@ -140,26 +167,35 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" itemScope itemType="https://schema.org/ItemList">
-              {featuredArticles.map((article, index) => (
-                <div key={article.id} itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                  <meta itemProp="position" content={String(index + 1)} />
-                  <ArticleCard article={article} showCategory={true} />
-                </div>
-              ))}
+              {dataLoaded ? (
+                featuredArticles.map((article, index) => (
+                  <div key={article.id} itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                    <meta itemProp="position" content={String(index + 1)} />
+                    <Suspense fallback={<ArticleCardSkeleton />}>
+                      <ArticleCard article={article} showCategory={true} />
+                    </Suspense>
+                  </div>
+                ))
+              ) : (
+                // Show loading skeletons while data loads
+                Array.from({ length: 6 }).map((_, index) => (
+                  <ArticleCardSkeleton key={index} />
+                ))
+              )}
             </div>
             
             <div className="text-center mt-12">
-              <Button asChild size="lg" className="bg-[#1B2A41] hover:bg-[#152030] transition-all duration-200 hover:scale-105">
+              <Button asChild size="lg" className="bg-[#1B2A41] hover:bg-[#152030]">
                 <a href="/articles" aria-label="View all Microsoft 365 administration articles">View All Articles</a>
               </Button>
             </div>
           </div>
         </section>
 
-        {/* Newsletter Section with better accessibility */}
+        {/* Newsletter Section - simplified for performance */}
         <section className="py-16 bg-[#F2F4F7]" itemScope itemType="https://schema.org/WebPageElement">
           <div className="container mx-auto px-4">
-            <Card className="max-w-2xl mx-auto transition-transform duration-200 hover:scale-[1.02]">
+            <Card className="max-w-2xl mx-auto">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl text-gray-900">
                   Stay Updated with Microsoft 365 Tips
@@ -173,11 +209,11 @@ const Index = () => {
                   <Input
                     type="email"
                     placeholder="Enter your email address"
-                    className="flex-1 transition-all duration-200 hover:shadow-md focus:shadow-lg"
+                    className="flex-1"
                     aria-label="Email address for newsletter subscription"
                     required
                   />
-                  <Button type="submit" className="bg-[#1B2A41] hover:bg-[#152030] transition-all duration-200 hover:scale-105">
+                  <Button type="submit" className="bg-[#1B2A41] hover:bg-[#152030]">
                     Subscribe to Newsletter
                   </Button>
                 </form>
