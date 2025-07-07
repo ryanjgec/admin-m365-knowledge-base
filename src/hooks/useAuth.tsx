@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,6 +43,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const createUserProfile = async (user: User) => {
+    try {
+      // Check if profile already exists
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (existingProfile) {
+        console.log('Profile already exists');
+        return;
+      }
+
+      // Create profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          email: user.email,
+          full_name: user.user_metadata?.full_name || user.email
+        });
+
+      if (profileError) {
+        console.error('Error creating profile:', profileError);
+        return;
+      }
+
+      // Create default user role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: user.id,
+          role: 'user'
+        });
+
+      if (roleError) {
+        console.error('Error creating user role:', roleError);
+      }
+
+      console.log('Profile and role created successfully');
+    } catch (error) {
+      console.error('Error in createUserProfile:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('Setting up auth state listener');
     
@@ -55,6 +100,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          // Create profile if it doesn't exist (for new users)
+          if (event === 'SIGNED_UP' || event === 'SIGNED_IN') {
+            await createUserProfile(session.user);
+          }
+          
           // Fetch user role after setting user
           const role = await fetchUserRole(session.user.id);
           setUserRole(role);
@@ -85,13 +135,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     console.log('Attempting sign up for:', email);
-    const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
         }
@@ -102,6 +150,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error('Sign up error:', error);
     } else {
       console.log('Sign up successful for:', email);
+      // Profile creation will be handled by the auth state change listener
     }
     
     return { error };

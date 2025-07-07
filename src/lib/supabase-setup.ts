@@ -88,3 +88,52 @@ export const createFirstAdmin = async (userEmail: string) => {
     return false;
   }
 };
+
+export const ensureUserProfile = async (user: any) => {
+  try {
+    // Check if profile exists
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .single();
+
+    if (existingProfile) {
+      console.log('Profile already exists');
+      return true;
+    }
+
+    // Create profile
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: user.id,
+        email: user.email,
+        full_name: user.user_metadata?.full_name || user.email
+      });
+
+    if (profileError) {
+      console.error('Error creating profile:', profileError);
+      return false;
+    }
+
+    // Create default user role
+    const { error: roleError } = await supabase
+      .from('user_roles')
+      .insert({
+        user_id: user.id,
+        role: 'user'
+      });
+
+    if (roleError) {
+      console.error('Error creating user role:', roleError);
+      return false;
+    }
+
+    console.log('✅ Profile and role created successfully');
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to ensure user profile:', error);
+    return false;
+  }
+};

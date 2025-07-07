@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -52,7 +51,23 @@ const AdminSetup = () => {
       const targetUserId = profiles.id;
       console.log('Found user profile:', profiles);
 
-      // Direct insert into user_roles table instead of using RPC
+      // Check if user already has admin role
+      const { data: existingRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', targetUserId)
+        .eq('role', 'admin')
+        .single();
+
+      if (existingRole) {
+        toast({
+          title: "Already Admin",
+          description: `${userEmail} is already an admin`,
+        });
+        return;
+      }
+
+      // Insert admin role (will replace existing user role due to unique constraint)
       const { error: insertError } = await supabase
         .from('user_roles')
         .upsert({
@@ -154,7 +169,7 @@ const AdminSetup = () => {
           </Button>
 
           <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
-            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This directly updates the user_roles table.</p>
+            <p><strong>Note:</strong> Users must sign up first before they can be made admin. This will update the user_roles table directly.</p>
           </div>
         </CardContent>
       </Card>
