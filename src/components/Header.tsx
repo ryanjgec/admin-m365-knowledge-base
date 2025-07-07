@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 
 const Header = () => {
@@ -94,9 +94,17 @@ const Header = () => {
                 </Button>
               </div>
             ) : (
-              <Button asChild>
-                <Link to="/auth">Sign In</Link>
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/setup">
+                    <Database className="w-4 h-4 mr-2" />
+                    Setup
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+              </div>
             )}
           </div>
 
@@ -180,9 +188,17 @@ const Header = () => {
                     </Button>
                   </div>
                 ) : (
-                  <Button asChild className="w-full">
-                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
-                  </Button>
+                  <div className="space-y-2">
+                    <Button asChild variant="outline" className="w-full">
+                      <Link to="/setup" onClick={() => setIsMenuOpen(false)}>
+                        <Database className="w-4 h-4 mr-2" />
+                        Setup Guide
+                      </Link>
+                    </Button>
+                    <Button asChild className="w-full">
+                      <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+                    </Button>
+                  </div>
                 )}
               </div>
             </nav>
